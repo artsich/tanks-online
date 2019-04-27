@@ -3,13 +3,13 @@
 
 namespace core { namespace window {
 
-	Window::Window(const setting_window* setting) 
-	{
-		keyListener = NULL;
-
-		InitWindow(setting->HInstance, setting->title, setting->width, setting->height);
+	Window::Window(const setting_window* setting) : 
+		setting(setting), 
+		keyListener(NULL)
+	{			
+		InitWindow(setting->hInstance, setting->title, setting->windowWidth, setting->windowHeight);
 		window_dimension ClientRect = GetClientRectangle();
-		ResizeDIBSection(ClientRect.widht, ClientRect.height);
+		ResizeSection(ClientRect.widht, ClientRect.height);
 	}
 
 	Window::~Window() 
@@ -22,11 +22,11 @@ namespace core { namespace window {
 		if (screenBuffer.Memory)
 		{
 			int size = screenBuffer.Width * screenBuffer.Height * screenBuffer.BytesPerPixel;
-			memset(screenBuffer.Memory, 0, size);
+			memset(screenBuffer.Memory, CLEAR_COLOR, size);
 		}
 	}
 
-	void Window::close() 
+	void Window::close()
 	{
 		Running = false;
 
@@ -77,6 +77,7 @@ namespace core { namespace window {
 
 	void Window::render() {
 		HDC DeviceContext = GetDC(HandleWindow);
+
 		StretchDIBits(DeviceContext,
 			0, 0,
 			screenBuffer.Width,
@@ -91,7 +92,7 @@ namespace core { namespace window {
 		ReleaseDC(HandleWindow, DeviceContext);
 	}
 
-	void Window::ResizeDIBSection(int width, int height) 
+	void Window::ResizeSection(int width, int height) 
 	{
 		if (screenBuffer.Memory != NULL)
 		{
@@ -132,7 +133,7 @@ namespace core { namespace window {
 				
 					if (WasDown) 
 					{
-#if INPUT_DEBUG
+#if !INPUT_DEBUG
 						char buf[20] = "WasDown ";
 						buf[8] = (char)VKCode;
 						buf[9] = '\n';
@@ -145,7 +146,7 @@ namespace core { namespace window {
 					}
 					if (IsDown) 
 					{
-#if INPUT_DEBUG
+#if !INPUT_DEBUG
 						char buf[20] = "IsDown ";
 						buf[7] = (char)VKCode;
 						buf[8] = '\n';

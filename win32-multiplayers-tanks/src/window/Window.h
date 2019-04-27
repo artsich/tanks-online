@@ -22,9 +22,14 @@ namespace core { namespace window {
 
 	struct setting_window {
 		const char* title;
+
 		int width;
 		int height;
-		HINSTANCE HInstance;
+
+		int windowWidth;
+		int windowHeight;
+
+		HINSTANCE hInstance;
 	};
 
 	class Window {
@@ -33,7 +38,7 @@ namespace core { namespace window {
 		HWND HandleWindow;
 		WNDCLASS WindowClass;
 		BOOLEAN Running;
-
+		const setting_window* setting;
 		core::input::IKeyListener* keyListener;
 
 	public:
@@ -53,9 +58,11 @@ namespace core { namespace window {
 		screen_buffer* get_back_buffer() { return &screenBuffer; }
 
 	private:
-		void ResizeDIBSection(int width, int height);
+		void ResizeSection(int width, int height);
 		window_dimension GetClientRectangle();
 		void InitWindow(HINSTANCE HInstance, const char* title, int width, int height);
+
 		static LRESULT CALLBACK Win32WindowCallback(HWND Window, UINT Message, WPARAM WParam, LPARAM LParam);
+		static void FromPixelToDisplay(HDC deviceContext, screen_buffer* buffer, setting_window* setting);
 	};
 }}

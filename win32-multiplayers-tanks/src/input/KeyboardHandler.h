@@ -11,23 +11,10 @@ namespace core { namespace input {
 		static bool keys[];
 
 	public:
-		static bool isKeyPressed(int keyCode) {
-			if (keyCode > MAX_KEYS) {
-				return false;
-			}
-			return keys[keyCode];
-		}
 
-		void pressedKey(int keyCode) override {
-			if (keyCode < MAX_KEYS) {
-				keys[keyCode] = true;
-			}
-		}
-
-		void releaseKey(int keyCode) override {
-			keys[keyCode] = false;
-		}
+		InputHandler();
+		static bool isKeyPressed(int keyCode);
+		void pressedKey(int keyCode) override;
+		void releaseKey(int keyCode) override;
 	};
-
-	bool InputHandler::keys[MAX_KEYS];
 }}

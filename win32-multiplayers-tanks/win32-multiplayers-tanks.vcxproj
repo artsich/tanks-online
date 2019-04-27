@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\input\gamecontroller.cpp" />
+    <ClCompile Include="src\input\KeyboardHanler.cpp" />
     <ClCompile Include="src\io\syncio.cpp" />
     <ClCompile Include="src\math\vec2.cpp" />
     <ClCompile Include="src\imageloaders\loadbmp.cpp" />
@@ -28,6 +30,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\game\Game.h" />
+    <ClInclude Include="src\input\gamecontroller.h" />
     <ClInclude Include="src\input\IKeyListener.h" />
     <ClInclude Include="src\input\KeyboardHandler.h" />
     <ClInclude Include="src\io\syncio.h" />
