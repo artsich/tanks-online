@@ -5,7 +5,7 @@
 
 namespace core { namespace window {
 
-#define CLEAR_COLOR 0xFF00FF
+#define CLEAR_COLOR 0x00FFFFFF
 
 	struct screen_buffer {
 		BITMAPINFO Info;
@@ -22,10 +22,10 @@ namespace core { namespace window {
 
 	struct setting_window {
 		const char* title;
+		const char* windowClassName;
 
 		int width;
 		int height;
-
 		int windowWidth;
 		int windowHeight;
 
@@ -60,9 +60,8 @@ namespace core { namespace window {
 	private:
 		void ResizeSection(int width, int height);
 		window_dimension GetClientRectangle();
-		void InitWindow(HINSTANCE HInstance, const char* title, int width, int height);
+		void InitWindow(const setting_window* setting);
 
 		static LRESULT CALLBACK Win32WindowCallback(HWND Window, UINT Message, WPARAM WParam, LPARAM LParam);
-		static void FromPixelToDisplay(HDC deviceContext, screen_buffer* buffer, setting_window* setting);
 	};
 }}

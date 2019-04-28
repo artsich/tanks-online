@@ -6,10 +6,9 @@ namespace core { namespace window {
 	Window::Window(const setting_window* setting) : 
 		setting(setting), 
 		keyListener(NULL)
-	{			
-		InitWindow(setting->hInstance, setting->title, setting->windowWidth, setting->windowHeight);
-		window_dimension ClientRect = GetClientRectangle();
-		ResizeSection(ClientRect.widht, ClientRect.height);
+	{
+		InitWindow(setting);
+		ResizeSection(setting->width, setting->height);
 	}
 
 	Window::~Window() 
@@ -22,7 +21,7 @@ namespace core { namespace window {
 		if (screenBuffer.Memory)
 		{
 			int size = screenBuffer.Width * screenBuffer.Height * screenBuffer.BytesPerPixel;
-			memset(screenBuffer.Memory, CLEAR_COLOR, size);
+//			memset(screenBuffer.Memory, 0, size);
 		}
 	}
 
@@ -42,14 +41,14 @@ namespace core { namespace window {
 		this->keyListener = keyListener;
 	}
 
-	void Window::InitWindow(HINSTANCE hInstance, const char* title, int width, int height) 
+	void Window::InitWindow(const setting_window* setting)
 	{
 		WindowManager::getInstance().add_window(this);
 
 		WindowClass = { 0 };
-		WindowClass.hInstance = hInstance;
+		WindowClass.hInstance = setting->hInstance;
 		WindowClass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-		WindowClass.lpszClassName = "MainWindow";
+		WindowClass.lpszClassName = setting->windowClassName;
 		WindowClass.lpfnWndProc = Win32WindowCallback;
 		Running = false;
 
@@ -58,15 +57,15 @@ namespace core { namespace window {
 			HandleWindow = CreateWindowEx(
 				0,
 				WindowClass.lpszClassName,
-				title,
+				setting->title,
 				WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 				CW_USEDEFAULT,
 				CW_USEDEFAULT,
-				width,
-				height,
+				setting->windowWidth,
+				setting->windowHeight,
 				0,
 				0,
-				hInstance,
+				setting->hInstance,
 				0);
 			if (HandleWindow) 
 			{

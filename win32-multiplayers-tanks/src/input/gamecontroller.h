@@ -56,11 +56,10 @@ namespace core { namespace controller {
 
 	struct game_input
 	{
-		float dtForFrame;
-
-		game_button_state Mousebuttons[5];
+//		float dtForFrame;
 		int32_t MouseX, MouseY;
 
+		game_button_state Mousebuttons[5];
 		game_controller_input Controllers[5];
 	};
 

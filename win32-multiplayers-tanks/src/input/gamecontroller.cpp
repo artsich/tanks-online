@@ -51,7 +51,7 @@ namespace core { namespace controller {
 			if (!XInputSetState) { XInputSetState = xInputSetStateStub; }
 		}
 	}
-
+	//[I0 - d; I0 + d]
 	static float Win32ProcessXInputStickValue(SHORT Value, SHORT DeadZoneThreshould)
 	{
 		float Result = 0;
@@ -92,12 +92,12 @@ namespace core { namespace controller {
 			core::input::InputHandler::isKeyPressed(VK_MOVE_LEFT));
 	}
 
-	static void Win32ProcessXInputDigitalButton(DWORD XInputButtonState,
-		game_button_state* NewState, DWORD ButtonBit,
-		game_button_state* OldState)
+	static void Win32ProcessXInputDigitalButton(DWORD xInputButtonState,
+		game_button_state* newState, DWORD buttonBit,
+		game_button_state* oldState)
 	{
-		NewState->EndedDown = ((XInputButtonState & ButtonBit) == ButtonBit);
-		NewState->HalfTransiotionCount = (OldState->EndedDown != NewState->EndedDown) ? 1 : 0;
+		newState->EndedDown = ((xInputButtonState & buttonBit) == buttonBit);
+		newState->HalfTransiotionCount = (oldState->EndedDown != newState->EndedDown) ? 1 : 0;
 	}
 
 	inline game_controller_input* GetController(game_input* Input, int ControllerIndex)
@@ -119,7 +119,7 @@ namespace core { namespace controller {
 		return NewInput;
 	}
 
-	void update_input(/*float dt*/)
+	void update_input()
 	{
 		game_input* Temp = NewInput;
 		NewInput = OldInput;
@@ -171,7 +171,7 @@ namespace core { namespace controller {
 			game_controller_input* newController = GetController(NewInput, ourControllerIndex);
 
 			XINPUT_STATE controllerState;
-			if(XInputGetState(ourControllerIndex, &controllerState))
+			if(XInputGetState(ourControllerIndex, &controllerState) == ERROR_SUCCESS)
 			{ 
 				newController->IsConnected = true;
 				newController->IsAnalog = true;
@@ -200,22 +200,19 @@ namespace core { namespace controller {
 					newController->StickAverageX = 1.0f;
 				}
 
-				float Threshould = 0.5f;
+				/*float Threshould = 0.5f;
 				Win32ProcessXInputDigitalButton((newController->StickAverageX < -Threshould) ? 1 : 0,
 					&oldController->ActionLeft, 1,
 					&newController->ActionLeft);
-
 				Win32ProcessXInputDigitalButton((newController->StickAverageX > Threshould) ? 1 : 0,
 					&oldController->ActionRight, 1,
 					&newController->ActionRight);
-
 				Win32ProcessXInputDigitalButton((newController->StickAverageY < -Threshould) ? 1 : 0,
 					&oldController->ActionUp, 1,
 					&newController->ActionUp);
-
 				Win32ProcessXInputDigitalButton((newController->StickAverageY > Threshould) ? 1 : 0,
 					&oldController->ActionDown, 1,
-					&newController->ActionDown);
+					&newController->ActionDown);*/
 
 				Win32ProcessXInputDigitalButton(gamePad->wButtons,
 					&oldController->ActionDown, XINPUT_GAMEPAD_A,
@@ -232,6 +229,18 @@ namespace core { namespace controller {
 				Win32ProcessXInputDigitalButton(gamePad->wButtons,
 					&oldController->ActionUp, XINPUT_GAMEPAD_Y,
 					&newController->ActionUp);
+
+				Win32ProcessXInputDigitalButton(gamePad->wButtons,
+					&oldController->ActionUp, XINPUT_GAMEPAD_Y,
+					&newController->ActionUp);
+
+				Win32ProcessXInputDigitalButton(gamePad->wButtons,
+					&oldController->Start, XINPUT_GAMEPAD_START,
+					&newController->Start);
+
+				Win32ProcessXInputDigitalButton(gamePad->wButtons,
+					&oldController->Back, XINPUT_GAMEPAD_BACK,
+					&newController->Back);
 			}
 			else
 			{

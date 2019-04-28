@@ -118,7 +118,7 @@ namespace core { namespace physic {
 				{
 					dy = 1.0f;
 				}
-				dy *= speed;
+				dx *= speed;
 				dy *= speed;
 
 				core::math::vec2& pos = entity.pos;
@@ -138,15 +138,18 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow
 	setting.windowWidth = 1024;
 	setting.windowHeight = 720;
 
+	setting.windowClassName = "MainWindow";
 	setting.title = "World of tanks online";
 	setting.hInstance = hInstance;
 
-	core::window::Window window(&setting);
 	core::input::InputHandler handler;
-	window.set_key_listener(&handler);
+	core::window::Window window(&setting);
 	core::window::screen_buffer* buffer = window.get_back_buffer();
 	core::graphics::Rasterization resterizer(buffer);
+	
+	window.set_key_listener(&handler);
 	core::controller::input_setup();
+
 	core::controller::game_input* input = core::controller::get_input();
 
 	core::Timer timer;
@@ -157,11 +160,13 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow
 	float delta = 0.0f;
 	float framePerSecond = 1.0f / 60.0f;
 	
-	float speed = 126.0f;
+	float speed = 128.0f;
 
-	core::physic::entity player;
-	player.pos = core::math::vec2(100, 100);
-	player.size = core::math::vec2(100, 100);
+	core::physic::entity player = 
+	{ 
+		core::math::vec2(100, 100), 
+		core::math::vec2(100, 100)
+	};
 
 	while (window.isClose())
 	{
@@ -174,11 +179,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow
 			window.processMessage();
 			core::controller::update_input();
 
-#if !INPUT_DEBUG
-			std::string result = "X: " + std::to_string(input->Controllers[MY_DEBUG_GAMEPAD].StickAverageX*delta)
-				+ " Y: " + std::to_string(input->Controllers[MY_DEBUG_GAMEPAD].StickAverageY * delta) + "\n";
-			OutputDebugString(result.c_str());
-#endif
 			core::physic::physic_handle(input, player, speed, delta);
 
 			delta = 0;
