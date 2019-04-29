@@ -21,7 +21,7 @@ namespace core { namespace window {
 		if (screenBuffer.Memory)
 		{
 			int size = screenBuffer.Width * screenBuffer.Height * screenBuffer.BytesPerPixel;
-//			memset(screenBuffer.Memory, 0, size);
+			memset(screenBuffer.Memory, 0, size);
 		}
 	}
 
@@ -85,7 +85,7 @@ namespace core { namespace window {
 			screenBuffer.Width,
 			screenBuffer.Height,
 			screenBuffer.Memory,
-			&screenBuffer.Info,
+			&bitmapInfo,
 			DIB_RGB_COLORS,
 			SRCCOPY);
 		ReleaseDC(HandleWindow, DeviceContext);
@@ -104,12 +104,12 @@ namespace core { namespace window {
 		screenBuffer.Height = height;
 		screenBuffer.Pitch = screenBuffer.Width * BytesPerPixel;
 
-		screenBuffer.Info.bmiHeader.biSize = sizeof(screenBuffer.Info.bmiHeader);
-		screenBuffer.Info.bmiHeader.biWidth = screenBuffer.Width;
-		screenBuffer.Info.bmiHeader.biHeight = -screenBuffer.Height;
-		screenBuffer.Info.bmiHeader.biPlanes = 1;
-		screenBuffer.Info.bmiHeader.biBitCount = 32;
-		screenBuffer.Info.bmiHeader.biCompression = BI_RGB;
+		bitmapInfo.bmiHeader.biSize = sizeof(bitmapInfo.bmiHeader);
+		bitmapInfo.bmiHeader.biWidth = screenBuffer.Width;
+		bitmapInfo.bmiHeader.biHeight = screenBuffer.Height;
+		bitmapInfo.bmiHeader.biPlanes = 1;
+		bitmapInfo.bmiHeader.biBitCount = 32;
+		bitmapInfo.bmiHeader.biCompression = BI_RGB;
 
 		int BitmapMemorySize = (width * height) * BytesPerPixel;
 		screenBuffer.Memory = VirtualAlloc(0, BitmapMemorySize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);

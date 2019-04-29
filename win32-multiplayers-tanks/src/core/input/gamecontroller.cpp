@@ -93,8 +93,8 @@ namespace core { namespace controller {
 	}
 
 	static void Win32ProcessXInputDigitalButton(DWORD xInputButtonState,
-		game_button_state* newState, DWORD buttonBit,
-		game_button_state* oldState)
+		game_button_state* oldState, DWORD buttonBit,
+		game_button_state* newState)
 	{
 		newState->EndedDown = ((xInputButtonState & buttonBit) == buttonBit);
 		newState->HalfTransiotionCount = (oldState->EndedDown != newState->EndedDown) ? 1 : 0;
@@ -225,10 +225,6 @@ namespace core { namespace controller {
 				Win32ProcessXInputDigitalButton(gamePad->wButtons,
 					&oldController->ActionLeft, XINPUT_GAMEPAD_X,
 					&newController->ActionLeft);
-
-				Win32ProcessXInputDigitalButton(gamePad->wButtons,
-					&oldController->ActionUp, XINPUT_GAMEPAD_Y,
-					&newController->ActionUp);
 
 				Win32ProcessXInputDigitalButton(gamePad->wButtons,
 					&oldController->ActionUp, XINPUT_GAMEPAD_Y,

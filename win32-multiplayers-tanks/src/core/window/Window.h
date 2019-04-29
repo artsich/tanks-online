@@ -2,19 +2,11 @@
 
 #include <Windows.h>
 #include "../input/IKeyListener.h"
+#include "../core.h"
 
 namespace core { namespace window {
 
 #define CLEAR_COLOR 0x00FFFFFF
-
-	struct screen_buffer {
-		BITMAPINFO Info;
-		int Width;
-		int Height;
-		int BytesPerPixel;
-		int Pitch;
-		void* Memory;
-	};
 
 	struct window_dimension {
 		int widht, height;
@@ -35,6 +27,8 @@ namespace core { namespace window {
 	class Window {
 	private:
 		screen_buffer screenBuffer;
+		BITMAPINFO bitmapInfo;
+
 		HWND HandleWindow;
 		WNDCLASS WindowClass;
 		BOOLEAN Running;

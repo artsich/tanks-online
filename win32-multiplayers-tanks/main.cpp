@@ -1,156 +1,89 @@
 #include <Windows.h>
 #include <iostream>
 #include <string>
-#include "src/core.h"
-#include "src/utils/Timer.h"
-#include "src/window/Window.h"
-#include "src/input/gamecontroller.h"
-#include "src/input/KeyboardHandler.h"
-#include "src/imageloaders/loadbmp.h"
-#include "src/math/vec2.h"
+#include "src/core/core.h"
+#include "src/core/utils/Timer.h"
+#include "src/core/window/Window.h"
+#include "src/core/input/gamecontroller.h"
+#include "src/core/input/KeyboardHandler.h"
+#include "src/core/imageloaders/loadbmp.h"
+#include "src/core/graphics/Rasterizer.h"
+#include "src/core/math/vec2.h"
+#include "src/game/systems/physics_system.h"
 
-#define TEST_IMAGE_FILE "C:\\Users\\artyo\\source\\repos\\multiplayer-tanks\\Debug\\image.bmp"
+#define TEST_IMAGE_FILE "C:\\Users\\artyo\\source\\repos\\multiplayer-tanks\\win32-multiplayers-tanks\\res\\game_tile_set.bmp"
 #define TEST_TEXT_FILE "C:\\Users\\artyo\\source\\repos\\multiplayer-tanks\\Debug\\text.txt"
-#define MY_DEBUG_GAMEPAD 2
-#define MY_DEBUG_KEYBOARD 0
 
-namespace core { namespace graphics {
+#define GameWindowWidth 800
+#define GameWindowHeight 800
 
-	struct sprite
+core::graphics::texture* cut_texture(core::graphics::texture* source_texture, int x, int y, int w, int h) 
+{
+	uint32_t* source_buffer = (uint32_t*)source_texture->buffer;
+	core::graphics::texture* result = (core::graphics::texture*)malloc(sizeof(core::graphics::texture));
+	result->width = w;
+	result->height = h;
+
+	uint32_t* result_buffer = (uint32_t*)malloc(sizeof(uint32_t)*w*h);
+
+	for (int yy = y; yy < y + h; ++yy) 
 	{
-		core::math::vec2 pos;
-		core::math::vec2 size;
-	};
-
-	class Rasterization
-	{
-	private:
-		core::window::screen_buffer* buffer;
-
-	public:
-		Rasterization(core::window::screen_buffer* buffer) : 
-			buffer(buffer) 
-		{}
-
-		void draw_rect(float xmin, float xmax, float ymin, float ymax, uint32_t color)
+		uint32_t next_row = x + yy * source_texture->width;
+		uint32_t* row = (source_buffer + next_row);
+		for (int xx = x; xx < x + w; ++xx)
 		{
-			if (xmin < 0)
-			{
-				xmin = 0;
-			}
-			if (ymin < 0)
-			{
-				ymin = 0;
-			}
-			if (xmax > buffer->Width)
-			{
-				xmax = buffer->Width;
-			}
-			if (ymax > buffer->Height)
-			{
-				ymax = buffer->Height;
-			}
-
-			uint32_t* pixels = ((uint32_t*)buffer->Memory);
-			if (!pixels) return;
-
-			for (int y = ymin; y < ymax; ++y)
-			{
-				for (int x = xmin; x < xmax; ++x)
-				{
-					pixels[x + y * buffer->Width] = color;
-				}
-			}
-		}
-	};
-}}
-
-namespace core { namespace physic {
-
-	struct entity
-	{
-		core::math::vec2 pos;
-		core::math::vec2 size;
-	};
-	//TODO: bug for gamepad infinity stick movable ???
-	void physic_handle(core::controller::game_input* input, entity& entity, float speed, float dt)
-	{
-		for (int controllerIndex = 0;
-			controllerIndex < ArrayCount(input->Controllers);
-			++controllerIndex)
-		{
-			core::controller::game_controller_input* controller = core::controller::GetController(input, controllerIndex);
-
-			if (!controller->IsConnected)
-			{
-				continue;
-			}
-
-			if (controller->IsAnalog)
-			{
-				float xStick = controller->StickAverageX;
-				float yStick = -controller->StickAverageY;
-
-				core::math::vec2& pos = entity.pos;
-				pos.x += xStick * speed * dt;
-				pos.y += yStick * speed * dt;
-			}
-			else 
-			{
-				float dx = 0.0f;
-				float dy = 0.0f;
-				if (controller->MoveLeft.EndedDown)
-				{
-					dx = -1.0f;
-				}
-
-				if (controller->MoveRight.EndedDown)
-				{
-					dx = 1.0f;
-				}
-
-				if (controller->MoveUp.EndedDown)
-				{
-					dy = -1.0f;
-				}
-
-				if (controller->MoveDown.EndedDown)
-				{
-					dy = 1.0f;
-				}
-				dx *= speed;
-				dy *= speed;
-
-				core::math::vec2& pos = entity.pos;
-
-				pos.x += dx * dt;
-				pos.y += dy * dt;
-			}		
+			*result_buffer++ = *row++;
 		}
 	}
-}}
+	
+	result->buffer = result_buffer;
+	return result;
+}
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow)
 {
+#pragma region setting
+
 	core::window::setting_window setting;
-	setting.width = 800;
-	setting.height = 600;
+	setting.width = GameWindowWidth;
+	setting.height = GameWindowHeight;
 	setting.windowWidth = 1024;
 	setting.windowHeight = 720;
-
 	setting.windowClassName = "MainWindow";
 	setting.title = "World of tanks online";
 	setting.hInstance = hInstance;
 
 	core::input::InputHandler handler;
 	core::window::Window window(&setting);
-	core::window::screen_buffer* buffer = window.get_back_buffer();
-	core::graphics::Rasterization resterizer(buffer);
-	
+	core::screen_buffer* buffer = window.get_back_buffer();
+	core::graphics::Rasterizer resterizer(buffer);
+#pragma endregion
+
 	window.set_key_listener(&handler);
 	core::controller::input_setup();
-
 	core::controller::game_input* input = core::controller::get_input();
+
+	core::BmpImage image(TEST_IMAGE_FILE);
+	auto header = image.getBitmapHeader();
+
+	core::graphics::texture mainTileSet;
+	mainTileSet.buffer = image.getPixels();
+	mainTileSet.width = header->Width;
+	mainTileSet.height = header->Height;
+
+	core::graphics::sprite tank;
+	tank.pos = core::math::vec2(GameWindowWidth / 4, GameWindowHeight / 4);
+	tank.texture = *cut_texture(&mainTileSet, 0, 0, 100, 100);
+
+	core::graphics::simple_sprite ss;
+	ss.size = { 100, 100 };
+	ss.color = 255 << 16 | 255 << 8;
+
+	game::physics::entity player = 
+	{ 
+		core::math::vec2(100, 100), 
+		core::math::vec2(400, 256)
+	};
 
 	core::Timer timer;
 	float time = 0.0;
@@ -161,12 +94,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow
 	float framePerSecond = 1.0f / 60.0f;
 	
 	float speed = 128.0f;
-
-	core::physic::entity player = 
-	{ 
-		core::math::vec2(100, 100), 
-		core::math::vec2(100, 100)
-	};
 
 	while (window.isClose())
 	{
@@ -179,21 +106,23 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow
 			window.processMessage();
 			core::controller::update_input();
 
-			core::physic::physic_handle(input, player, speed, delta);
+			game::physics::physic_handle(input, player, speed, delta);
 
 			delta = 0;
 			updates++;
 		}
 
 		window.clear();
+#if 1
 
-		float xmin = player.pos.x;
-		float xmax = xmin + player.size.x;
-		float ymin = player.pos.y;
-		float ymax = ymin + player.size.y;
-		int color = 255 << 16;
+		ss.pos = player.pos;
 
-		resterizer.draw_rect(xmin, xmax, ymin, ymax, color);
+//		tank.pos = player.pos;
+//		resterizer.draw_rect(&tank);
+		resterizer.draw_rect(&ss);
+
+#endif
+
 		window.render();
 		frames++;
 

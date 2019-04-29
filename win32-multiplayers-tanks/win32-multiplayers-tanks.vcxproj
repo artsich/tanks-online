@@ -20,27 +20,33 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\input\gamecontroller.cpp" />
-    <ClCompile Include="src\input\KeyboardHanler.cpp" />
-    <ClCompile Include="src\io\syncio.cpp" />
-    <ClCompile Include="src\math\vec2.cpp" />
-    <ClCompile Include="src\imageloaders\loadbmp.cpp" />
-    <ClCompile Include="src\window\Window.cpp" />
-    <ClCompile Include="src\window\WindowManager.cpp" />
+    <ClCompile Include="src\core\graphics\Rasterizer.cpp" />
+    <ClCompile Include="src\core\input\gamecontroller.cpp" />
+    <ClCompile Include="src\core\input\KeyboardHanler.cpp" />
+    <ClCompile Include="src\core\io\syncio.cpp" />
+    <ClCompile Include="src\core\math\vec2.cpp" />
+    <ClCompile Include="src\core\imageloaders\loadbmp.cpp" />
+    <ClCompile Include="src\core\utils\utils.cpp" />
+    <ClCompile Include="src\core\window\Window.cpp" />
+    <ClCompile Include="src\core\window\WindowManager.cpp" />
+    <ClCompile Include="src\game\systems\physics_system.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\graphics\Rasterizer.h" />
+    <ClInclude Include="src\core\utils\utils.h" />
     <ClInclude Include="src\game\Game.h" />
-    <ClInclude Include="src\input\gamecontroller.h" />
-    <ClInclude Include="src\input\IKeyListener.h" />
-    <ClInclude Include="src\input\KeyboardHandler.h" />
-    <ClInclude Include="src\io\syncio.h" />
-    <ClInclude Include="src\math\vec2.h" />
-    <ClInclude Include="src\imageloaders\IImageLoader.h" />
-    <ClInclude Include="src\imageloaders\loadbmp.h" />
-    <ClInclude Include="src\utils\timer.h" />
-    <ClInclude Include="src\core.h" />
-    <ClInclude Include="src\window\Window.h" />
-    <ClInclude Include="src\window\WindowManager.h" />
+    <ClInclude Include="src\core\input\gamecontroller.h" />
+    <ClInclude Include="src\core\input\IKeyListener.h" />
+    <ClInclude Include="src\core\input\KeyboardHandler.h" />
+    <ClInclude Include="src\core\io\syncio.h" />
+    <ClInclude Include="src\core\math\vec2.h" />
+    <ClInclude Include="src\core\imageloaders\IImageLoader.h" />
+    <ClInclude Include="src\core\imageloaders\loadbmp.h" />
+    <ClInclude Include="src\core\utils\timer.h" />
+    <ClInclude Include="src\core\core.h" />
+    <ClInclude Include="src\core\window\Window.h" />
+    <ClInclude Include="src\core\window\WindowManager.h" />
+    <ClInclude Include="src\game\systems\physics_system.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

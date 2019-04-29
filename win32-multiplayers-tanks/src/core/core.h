@@ -14,4 +14,15 @@ namespace core {
 	Assert(Expression)
 #endif
 
+	struct screen_buffer 
+	{
+		int Width;
+		int Height;
+		int BytesPerPixel;
+		int Pitch;
+		void* Memory;
+	};
+
+
+
 }
