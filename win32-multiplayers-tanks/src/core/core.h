@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <stdlib.h>
+#include <algorithm>
 
 namespace core {
 
@@ -22,7 +23,19 @@ namespace core {
 		int Pitch;
 		void* Memory;
 	};
+	
+	using TypeID = uint32_t;
+	using ObjectID = uint32_t;
 
+	using EntityId = TypeID;
+	using EntityTypeId = uint32_t;
 
+	using ComponentId = TypeID;
+	using ComponentTypeId = uint32_t;
+
+	using SystemTypeId = TypeID;
+
+	static const ObjectID	INVALID_OBJECT_ID = std::numeric_limits<ObjectID>::max();
+	static const TypeID		INVALID_TYPE_ID = std::numeric_limits<TypeID>::max();
 
 }

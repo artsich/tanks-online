@@ -2,6 +2,7 @@
 
 #include "../../core/math/vec2.h"
 #include "../../core/input/gamecontroller.h"
+#include "../ecs/System.h"
 
 namespace game { namespace physics {
 
@@ -10,7 +11,6 @@ namespace game { namespace physics {
 		core::math::vec2 pos;
 		core::math::vec2 size;
 	};
-
 	void physic_handle(core::controller::game_input* input, entity& entity, float speed, float dt)
 	{
 		for (int controllerIndex = 0;
@@ -73,4 +73,31 @@ namespace game { namespace physics {
 			}
 		}
 	}
+}}
+
+
+namespace game { namespace sytems {
+
+	class PlayerInputSystem : public ecs::System<PlayerInputSystem>
+	{
+
+	public:
+
+		void startup(float dt) override
+		{
+
+		}
+
+		void shudown(float dt) override
+		{
+
+		}
+
+
+		void update(float dt) override
+		{
+
+		}
+	};
+
 }}
