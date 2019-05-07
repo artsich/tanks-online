@@ -1,81 +1,66 @@
 #include "StackAllocator.h"
 
-namespace core { namespace memory { namespace allocator {
+namespace core { namespace memory {
 
-	StackAllocator::StackAllocator(size_t memSize, const void* mem) :
-		IAllocator(memSize, mem)
+	StackAllocator::StackAllocator(u64 MemorySize, void* Memory) :
+		IAllocator(MemorySize, Memory)
 	{}
 
 	StackAllocator::~StackAllocator()
 	{
-		this->clear();
+		Clear();
 	}
 
-	void* StackAllocator::allocate(size_t memSize, uint8_t alignment)
+	void* StackAllocator::Allocate(u64 NeedMemory, u8 Alignment)
 	{
-		Assert(memSize > 0 && "allocate called with memSize = 0.");
+		Assert(NeedMemory > 0 && "allocate called with memSize = 0.");
 
 		union
 		{
-			void* asVoidPtr;
-			uintptr_t asUptr;
-			AllocMetaInfo* asMeta;
+			void* AsVoidPtr;
+			u32* AsU32Ptr;
+			AllocMetaInfo* AsMeta;
 		};
 
-		asVoidPtr = (void*)this->m_MemoryFirstAddress;
+		AsVoidPtr = (void*)this->MemoryFirstAddress;
+		AsU32Ptr += AllocatedMemory;
 
-		// current address
-		asUptr += this->m_MemoryUsed;
+		u8 Adjustment = GetAdjustment(AsVoidPtr, Alignment, sizeof(AllocMetaInfo));
 
-		uint8_t adjustment = GetAdjustment(asVoidPtr, alignment, sizeof(AllocMetaInfo));
-
-		// check if there is enough memory available
-		if (this->m_MemoryUsed + memSize + adjustment > this->m_MemorySize)
+		if (AllocatedMemory + NeedMemory + Adjustment > MemorySize)
 		{
-			// not enough memory
 			return nullptr;
 		}
 
-		// store alignment in allocation meta info
-		asMeta->adjustment = adjustment;
+		AsMeta->Adjustment = Adjustment;
+		AsU32Ptr += Adjustment;
 
-		// determine aligned memory address
-		asUptr += adjustment;
+		AllocatedMemory += NeedMemory + Adjustment;
+		MemoryAllocations++;
 
-		// update book keeping
-		this->m_MemoryUsed += memSize + adjustment;
-		this->m_MemoryAllocations++;
-
-		// return aligned memory address
-		return asVoidPtr;
+		return AsVoidPtr;
 	}
 
-	void StackAllocator::free(void* mem)
+	void StackAllocator::Free(void* DeletingAddress)
 	{
 		union
 		{
-			void* asVoidPtr;
-			uintptr_t asUptr;
-			AllocMetaInfo* asMeta;
+			void* AsVoidPtr;
+			u32* AsU32Ptr;
+			AllocMetaInfo* AsMeta;
 		};
 
-		asVoidPtr = mem;
+		AsVoidPtr = DeletingAddress;
+		AsU32Ptr -= sizeof(AllocMetaInfo);
+		AllocatedMemory -= ((u32*)MemoryFirstAddress + AllocatedMemory) -
+							((u32*)DeletingAddress + AsMeta->Adjustment);
 
-		// get meta info
-		asUptr -= sizeof(AllocMetaInfo);
-
-		// free used memory
-		this->m_MemoryUsed -= ((uintptr_t)this->m_MemoryFirstAddress + this->m_MemoryUsed) - ((uintptr_t)mem + asMeta->adjustment);
-
-		// decrement allocation count
-		this->m_MemoryAllocations--;
+		MemoryAllocations--;
 	}
 
-	void StackAllocator::clear()
+	void StackAllocator::Clear()
 	{
-		// simply reset memory
-		this->m_MemoryUsed = 0;
-		this->m_MemoryAllocations = 0;
+		AllocatedMemory = 0;
+		MemoryAllocations = 0;
 	}
-
-} } }
+} }

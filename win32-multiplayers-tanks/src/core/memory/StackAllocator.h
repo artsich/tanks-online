@@ -2,7 +2,7 @@
 
 #include "IAllocator.h"
 
-namespace core { namespace memory { namespace allocator {
+namespace core { namespace memory {
 
 	class StackAllocator : public IAllocator
 	{
@@ -10,19 +10,19 @@ namespace core { namespace memory { namespace allocator {
 
 		struct AllocMetaInfo
 		{
-			uint8_t adjustment;
+			u8 Adjustment;
 		};
 
 	public:
 
-		StackAllocator(size_t memSize, const void* mem);
+		StackAllocator(u64 MemorySize, void* Memory);
 
 		virtual ~StackAllocator();
 
-		virtual void* allocate(size_t size, uint8_t alignment) override;
-		virtual void free(void* p) override;
-		virtual void clear() override;
+		virtual void* Allocate(u64 NeedMemory, u8 Alignment) override;
+		virtual void Free(void* Memory) override;
+		virtual void Clear() override;
 
 	};
 
-} } }
+} }

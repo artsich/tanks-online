@@ -1,54 +1,42 @@
 #pragma once
 #include "../core.h"
 
-namespace core { namespace memory { namespace allocator {
-	
+#define KB(x) (x     * 1024)
+#define MB(x) (KB(x) * 1024)
+#define GB(x) (MB(x) * 1024)
+
+#ifdef _WIN32
+	#define DEFAULT_ALIGNMENT_OF_MEMORY 4
+#elif _WIN64
+	#define DEFAULT_ALIGNMENT_OF_MEMORY 8
+#endif
+
+namespace core { namespace memory {
+
 	// returns address aligned
-	void* AlignForward(void* address, uint8_t alignment);
+	void* AlignForward(void* address, u8 alignment);
+
 	// returns the number of bytes needed to align the address
-	uint8_t GetAdjustment(const void* address, uint8_t alignment);
-	uint8_t  GetAdjustment(const void* address, uint8_t  alignment, uint8_t  extra);
+	u8 GetAdjustment(void* address, u8 alignment);
+	u8 GetAdjustment(void* address, u8 alignment, u8 extra);
 
 	class IAllocator
 	{
-	protected:
+	public:
+		const u64 MemorySize;
+		const void*	MemoryFirstAddress;
 
-		const size_t m_MemorySize;
-		const void*	m_MemoryFirstAddress;
+		u64 AllocatedMemory;
+		u64 MemoryAllocations;
 
-		size_t m_MemoryUsed;
-		uint64_t m_MemoryAllocations;
-
-		IAllocator(const size_t memSize, const void* mem);
+		IAllocator(const u64 MemorySize, void* Memory);
 		virtual ~IAllocator();
 
-	public:
-		virtual void* allocate(size_t size, uint8_t alignment) = 0;
-		virtual void free(void* p) = 0;
-		virtual void clear() = 0;
+		virtual void* Allocate(u64 size, u8 alignment) = 0;
+		virtual void Free(void* p) = 0;
+		virtual void Clear() = 0;
 
-		inline size_t GetMemorySize() const
-		{
-			return this->m_MemorySize;
-		}
-
-		inline const void* GetMemoryAddress0() const
-		{
-			return this->m_MemoryFirstAddress;
-		}
-
-		inline size_t GetUsedMemory() const
-		{
-			return this->m_MemoryUsed;
-		}
-
-		inline uint64_t GetAllocationCount() const
-		{
-			return this->m_MemoryAllocations;
-		}
-
+		friend void DEBUGPrintMemoryStatus(IAllocator* Memory);
 	};
 
-
-
-}}}
+}}

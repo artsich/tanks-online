@@ -1,8 +1,11 @@
 #include "IAllocator.h"
+#ifdef DEBUG
+#include <iostream>
+#endif
 
-namespace core { namespace memory { namespace allocator {
+namespace core { namespace memory { 
 
-	void* AlignForward(void* address, uint8_t alignment)
+	void* AlignForward(void* address, u8 alignment)
 	{
 		return (void*)
 			((reinterpret_cast<uintptr_t>(address) +
@@ -11,31 +14,39 @@ namespace core { namespace memory { namespace allocator {
 	}
 
 	// returns the number of bytes needed to align the address
-	uint8_t GetAdjustment(const void* address, uint8_t alignment)
+	u8 GetAdjustment(const void* address, u8 alignment)
 	{
-		uint8_t adjustment = alignment - (reinterpret_cast<uintptr_t>(address)& static_cast<uintptr_t>(alignment - 1));
+		u8 adjustment = alignment - (reinterpret_cast<uintptr_t>(address)& static_cast<uintptr_t>(alignment - 1));
 
 		return adjustment == alignment ? 0 : adjustment;
 	}
 
-	uint8_t  GetAdjustment(const void* address, uint8_t  alignment, uint8_t  extra)
+	u8  GetAdjustment(const void* Address, u8  Alignment, u8  Offset)
 	{
-		uint8_t  adjustment = GetAdjustment(address, alignment);
+		u8  Adjustment = GetAdjustment(Address, Alignment);
+		u8  NeededSpace = Offset;
 
-		uint8_t  neededSpace = extra;
-
-		if (adjustment < neededSpace)
+		if (Adjustment < NeededSpace)
 		{
-			neededSpace -= adjustment;
+			NeededSpace -= Adjustment;
 
 			//Increase adjustment to fit header
-			adjustment += alignment * (neededSpace / alignment);
+			Adjustment += Alignment * (NeededSpace / Alignment);
 
-			if (neededSpace % alignment > 0)
-				adjustment += alignment;
+			if (NeededSpace % Alignment > 0)
+				Adjustment += Alignment;
 		}
 
-		return adjustment;
+		return Adjustment;
 	}
 
-} } }
+	void DEBUGPrintMemoryStatus(IAllocator* Memory)
+	{
+		std::cout << "---------MEMORY DEBUG---------" << std::endl;
+		std::cout << "Allocated: " << Memory->AllocatedMemory << std::endl;
+		std::cout << "MemorySize: " << Memory->MemorySize << std::endl;
+		std::cout << "Poiner: " << Memory->MemoryFirstAddress << std::endl;
+		std::cout << "---------MEMORY DEBUG---------" << std::endl;
+	}
+
+} }

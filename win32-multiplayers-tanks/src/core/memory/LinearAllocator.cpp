@@ -1,62 +1,54 @@
 #include "LinearAllocator.h"
 
-namespace core { namespace memory { namespace allocator {
+namespace core { namespace memory {
 
-	LinearAllocator::LinearAllocator(size_t memSize, const void* mem) :
-		IAllocator(memSize, mem)
-	{}
+	LinearAllocator::LinearAllocator(u64 MemorySize, void* Memory) :
+		IAllocator(MemorySize, Memory)
+	{
+	}
 
 	LinearAllocator::~LinearAllocator()
 	{
-		this->clear();
+		Clear();
 	}
 
-	void* LinearAllocator::allocate(size_t memSize, uint8_t alignment)
+	void* LinearAllocator::Allocate(u64 NeedMemory, uint8_t Alignment)
 	{
-		Assert(memSize > 0 && "allocate called with memSize = 0.");
+		Assert(NeedMemory > 0 && "allocate called with memSize = 0.");
 
 		union
 		{
-			void* asVoidPtr;
-			uintptr_t asUptr;
+			void* AsVoidPtr;
+			u32* AsU32Ptr;
 		};
 
-		asVoidPtr = (void*)this->m_MemoryFirstAddress;
+		AsVoidPtr = (void*)this->MemoryFirstAddress;
+		AsU32Ptr += AllocatedMemory;
 
-		// current address
-		asUptr += this->m_MemoryUsed;
+		u8 Adjustment = GetAdjustment(AsVoidPtr, Alignment);
 
-		// get adjustment to align address
-		uint8_t adjustment = GetAdjustment(asVoidPtr, alignment);
-
-		// check if there is enough memory available
-		if (this->m_MemoryUsed + memSize + adjustment > this->m_MemorySize)
+		if (AllocatedMemory + NeedMemory + Adjustment > MemorySize)
 		{
-			// not enough memory
 			return nullptr;
 		}
 
-		// determine aligned memory address
-		asUptr += adjustment;
+		//Determine aligned memory address
+		AsU32Ptr += Adjustment;
 
-		// update book keeping
-		this->m_MemoryUsed += memSize + adjustment;
-		this->m_MemoryAllocations++;
+		AllocatedMemory += NeedMemory + Adjustment;
+		MemoryAllocations++;
 
-		// return aligned memory address
-		return asVoidPtr;
+		return AsVoidPtr;
 	}
 
-	void LinearAllocator::free(void* mem)
+	void LinearAllocator::Free(void* Address)
 	{
 		Assert(false && "Lineaer allocators do not support free operations. Use clear instead.");
 	}
 
-	void LinearAllocator::clear()
+	void LinearAllocator::Clear()
 	{
-		// simply reset memory
-		this->m_MemoryUsed = 0;
-		this->m_MemoryAllocations = 0;
+		AllocatedMemory = 0;
+		MemoryAllocations = 0;
 	}
-
-}}}
+}}
