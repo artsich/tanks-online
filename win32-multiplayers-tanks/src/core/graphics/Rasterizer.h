@@ -1,27 +1,27 @@
 #pragma once
 
 #include "../core.h"
-#include "../math/vec2.h"
+#include "../math/math.h"
 #include "../window/Window.h"
 
 namespace core { namespace graphics {
 
 	struct simple_sprite
 	{
-		core::math::vec2 pos;
-		core::math::vec2 size;
-		uint32_t color;
+		math::v2 pos;
+		math::v2 size;
+		u32 color;
 	};
 
 	struct texture {
-		uint32_t width;
-		uint32_t height;
+		u32 width;
+		u32 height;
 
 		void* buffer;
 	};
 
 	struct sprite {
-		core::math::vec2 pos;
+		math::vec2 pos;
 		texture texture;
 	};
 

@@ -2,8 +2,8 @@
 
 namespace core { namespace memory {
 
-	LinearAllocator::LinearAllocator(u64 MemorySize, void* Memory) :
-		IAllocator(MemorySize, Memory)
+	LinearAllocator::LinearAllocator(void* Memory, u64 MemorySize):
+		IAllocator(Memory, MemorySize)
 	{
 	}
 
@@ -12,9 +12,10 @@ namespace core { namespace memory {
 		Clear();
 	}
 
+	//TODO: AsU32Ptr - u32 , needmemory = u64
 	void* LinearAllocator::Allocate(u64 NeedMemory, uint8_t Alignment)
 	{
-		Assert(NeedMemory > 0 && "allocate called with memSize = 0.");
+		Assert(NeedMemory <= 0 && "allocate called with memSize = 0.");
 
 		union
 		{
@@ -22,7 +23,7 @@ namespace core { namespace memory {
 			u32* AsU32Ptr;
 		};
 
-		AsVoidPtr = (void*)this->MemoryFirstAddress;
+		AsVoidPtr = (void*)MemoryFirstAddress;
 		AsU32Ptr += AllocatedMemory;
 
 		u8 Adjustment = GetAdjustment(AsVoidPtr, Alignment);
@@ -32,9 +33,7 @@ namespace core { namespace memory {
 			return nullptr;
 		}
 
-		//Determine aligned memory address
 		AsU32Ptr += Adjustment;
-
 		AllocatedMemory += NeedMemory + Adjustment;
 		MemoryAllocations++;
 

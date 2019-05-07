@@ -106,7 +106,7 @@ namespace core { namespace window {
 
 		bitmapInfo.bmiHeader.biSize = sizeof(bitmapInfo.bmiHeader);
 		bitmapInfo.bmiHeader.biWidth = screenBuffer.Width;
-		bitmapInfo.bmiHeader.biHeight = screenBuffer.Height;
+		bitmapInfo.bmiHeader.biHeight = -screenBuffer.Height;
 		bitmapInfo.bmiHeader.biPlanes = 1;
 		bitmapInfo.bmiHeader.biBitCount = 32;
 		bitmapInfo.bmiHeader.biCompression = BI_RGB;

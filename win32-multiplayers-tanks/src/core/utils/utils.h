@@ -8,17 +8,24 @@ namespace core { namespace util {
 	class FamilyTypeID
 	{
 	private:
-		static TypeID count;
+		static TypeId count;
 	public:
 
 		template<class U>
-		static const TypeID Get()
+		static const TypeId Get()
 		{
-			static const TypeID STATIC_TYPE_ID { count++ };
+			static const TypeId STATIC_TYPE_ID { count++ };
 			return STATIC_TYPE_ID;
 		}
+
+		static const TypeId Get()
+		{
+			return count;
+		}		
 	};
+	
+	template<class T>
+	TypeId FamilyTypeID<T>::count = 0;
 
-	unsigned int reverse(register unsigned int x);
-
+	unsigned int reverse(unsigned int x);
 }}

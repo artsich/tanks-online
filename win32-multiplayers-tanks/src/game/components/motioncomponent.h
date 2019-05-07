@@ -1,21 +1,13 @@
 #pragma once
 
-#include "../ecs/Components.h"
-#include "../../core/math/vec2.h"
+#include "../../core/ecs/ecs.h"
+#include "../../core/math/math.h"
 
-namespace game { namespace component {
+struct MotionComponent : public core::ecs::Component<MotionComponent>
+{
+    f32 acceleration;
+    math::v3 velocity;
 
-	class MotionComponent : public game::ecs::Component<MotionComponent> 
-	{
-	public:
-
-		MotionComponent(core::math::vec2 pos, core::math::vec2 vel) :
-			position(pos), velocity(vel)
-		{}
-
-		core::math::vec2 position;
-		core::math::vec2 velocity;
-
-	};
-
-}}
+	MotionComponent() = default;
+	MotionComponent(math::v3 velocity, f32 acceleration);
+};

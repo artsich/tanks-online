@@ -15,7 +15,7 @@ namespace core { namespace memory {
 
 	public:
 
-		StackAllocator(u64 MemorySize, void* Memory);
+		StackAllocator(void* Memory, u64 MemorySize);
 
 		virtual ~StackAllocator();
 

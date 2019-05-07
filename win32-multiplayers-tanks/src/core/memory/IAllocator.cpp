@@ -13,15 +13,14 @@ namespace core { namespace memory {
 				static_cast<uintptr_t>(~(alignment - 1)));
 	}
 
-	// returns the number of bytes needed to align the address
-	u8 GetAdjustment(const void* address, u8 alignment)
+	u8 GetAdjustment(void* address, u8 alignment)
 	{
 		u8 adjustment = alignment - (reinterpret_cast<uintptr_t>(address)& static_cast<uintptr_t>(alignment - 1));
 
 		return adjustment == alignment ? 0 : adjustment;
 	}
 
-	u8  GetAdjustment(const void* Address, u8  Alignment, u8  Offset)
+	u8  GetAdjustment(void* Address, u8  Alignment, u8  Offset)
 	{
 		u8  Adjustment = GetAdjustment(Address, Alignment);
 		u8  NeededSpace = Offset;
@@ -39,6 +38,17 @@ namespace core { namespace memory {
 
 		return Adjustment;
 	}
+
+	IAllocator::IAllocator(void* Memory, const u64 MemorySize) :
+		MemorySize(MemorySize),
+		MemoryFirstAddress(Memory)
+	{
+	}
+
+	IAllocator::~IAllocator()
+	{
+	}
+
 
 	void DEBUGPrintMemoryStatus(IAllocator* Memory)
 	{

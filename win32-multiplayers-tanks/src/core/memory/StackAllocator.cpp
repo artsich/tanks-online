@@ -2,8 +2,8 @@
 
 namespace core { namespace memory {
 
-	StackAllocator::StackAllocator(u64 MemorySize, void* Memory) :
-		IAllocator(MemorySize, Memory)
+	StackAllocator::StackAllocator(void* Memory, u64  MemorySize) :
+		IAllocator(Memory, MemorySize)
 	{}
 
 	StackAllocator::~StackAllocator()

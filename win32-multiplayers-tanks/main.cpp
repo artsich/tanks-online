@@ -1,21 +1,29 @@
 #include <Windows.h>
 #include <iostream>
 #include <string>
+
 #include "src/core/core.h"
+#include "src/core/ecs/ecs.h"
+#include "src/core/ecs/managers/ComponentManager.h"
+#include "src/core/math/math.h"
 #include "src/core/utils/Timer.h"
 #include "src/core/window/Window.h"
-#include "src/core/input/gamecontroller.h"
-#include "src/core/input/KeyboardHandler.h"
-#include "src/core/imageloaders/loadbmp.h"
 #include "src/core/graphics/Rasterizer.h"
-#include "src/core/math/vec2.h"
-#include "src/game/systems/physics_system.h"
+#include "src/core/input/gamecontroller.h"
+#include "src/core/imageloaders/loadbmp.h"
+#include "src/core/input/KeyboardHandler.h"
+
+#include "src/game/systems/SystemMap.h"
+#include "src/game/components/ComponentsMap.h"
 
 #define TEST_IMAGE_FILE "C:\\Users\\artyo\\source\\repos\\multiplayer-tanks\\win32-multiplayers-tanks\\res\\game_tile_set.bmp"
 #define TEST_TEXT_FILE "C:\\Users\\artyo\\source\\repos\\multiplayer-tanks\\Debug\\text.txt"
 
 #define GameWindowWidth 800
-#define GameWindowHeight 800
+#define GameWindowHeight 600
+
+const f32 MonitorRefreshHz = 60.0f;
+const f32 MsPerSecond = 1.0f / MonitorRefreshHz;
 
 core::graphics::texture* cut_texture(core::graphics::texture* source_texture, int x, int y, int w, int h) 
 {
@@ -40,10 +48,9 @@ core::graphics::texture* cut_texture(core::graphics::texture* source_texture, in
 	return result;
 }
 
-INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow)
+INT WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow)
 {
 #pragma region setting
-
 	core::window::setting_window setting;
 	setting.width = GameWindowWidth;
 	setting.height = GameWindowHeight;
@@ -52,17 +59,55 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow
 	setting.windowClassName = "MainWindow";
 	setting.title = "World of tanks online";
 	setting.hInstance = hInstance;
+#pragma endregion
 
+#pragma region InitEngine
 	core::input::InputHandler handler;
 	core::window::Window window(&setting);
 	core::screen_buffer* buffer = window.get_back_buffer();
-	core::graphics::Rasterizer resterizer(buffer);
-#pragma endregion
+	core::graphics::Rasterizer rasterizer(buffer);
 
 	window.set_key_listener(&handler);
 	core::controller::input_setup();
 	core::controller::game_input* input = core::controller::get_input();
 
+//MEMMORY ALLOCATE
+	core::game_memory GameMemory;
+	GameMemory.SizeMemory = MB(100);
+	GameMemory.Memory = malloc(GameMemory.SizeMemory / 2);
+
+	memory::LinearAllocator LAllocator(GameMemory.Memory, GameMemory.SizeMemory);
+	core::ecs::ComponentManager CManager(&LAllocator);
+//core::ecs::EntiytManager EManager(GameMemory + LAllocator.SizeMemory, SizeMemory - LAllocator.SizeMemory);
+
+	core::ecs::ECSEngine ecsEngine(&CManager);
+	game::logic::RenderSystem RenderSystem(&ecsEngine, &rasterizer);
+	ecsEngine.addSystem(&RenderSystem);
+
+#pragma endregion
+
+#pragma region BlockCreate
+
+	core::ecs::GameObject Block {1, true};
+	core::ecs::GameObject Block2 { 2, true };
+
+	math::v2 RenderPosition = { 100, 100 };
+	math::v2 RenderSize = { 100, 100 };
+	u32 Color = 255 << 24;
+	auto Sprite = CManager.AddComponent<RenderComponent>(Block.Id, RenderPosition, RenderSize, Color);
+
+	math::v2 RenderPosition2 = { 1.0, 1.0 };
+	math::v2 RenderSize2 = { 100, 100 };
+	u32 Color2 = 255 << 8;
+	auto Sprite2 = CManager.AddComponent<RenderComponent>(Block2.Id, RenderPosition2, RenderSize2, Color2);
+
+	//math::v3 velocity = { 10.0f, 10.f };
+	//f32 Acceleration = 16.0f;
+	//auto justTest = CManager.AddComponent<MotionComponent>(Block.Id, velocity, Acceleration);
+
+#pragma endregion
+
+#if TEXTURE_TEST
 	core::BmpImage image(TEST_IMAGE_FILE);
 	auto header = image.getBitmapHeader();
 
@@ -74,16 +119,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow
 	core::graphics::sprite tank;
 	tank.pos = core::math::vec2(GameWindowWidth / 4, GameWindowHeight / 4);
 	tank.texture = *cut_texture(&mainTileSet, 0, 0, 100, 100);
-
-	core::graphics::simple_sprite ss;
-	ss.size = { 100, 100 };
-	ss.color = 255 << 16 | 255 << 8;
-
-	game::physics::entity player = 
-	{ 
-		core::math::vec2(100, 100), 
-		core::math::vec2(400, 256)
-	};
+#endif
 
 	core::Timer timer;
 	float time = 0.0;
@@ -91,9 +127,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow
 	UINT64 updates = 0;
 	float lastTime = timer.elapsed();
 	float delta = 0.0f;
-	float framePerSecond = 1.0f / 60.0f;
-	
-	float speed = 128.0f;
 
 	while (window.isClose())
 	{
@@ -101,28 +134,19 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow
 		delta += nowTime - lastTime;
 		lastTime = nowTime;
 
-		if (delta > framePerSecond)
+		if (delta > MsPerSecond)
 		{
 			window.processMessage();
 			core::controller::update_input();
-
-			game::physics::physic_handle(input, player, speed, delta);
+			
 
 			delta = 0;
 			updates++;
 		}
 
 		window.clear();
-#if 1
 
-		ss.pos = player.pos;
-
-//		tank.pos = player.pos;
-//		resterizer.draw_rect(&tank);
-		resterizer.draw_rect(&ss);
-
-#endif
-
+		ecsEngine.update(delta);
 		window.render();
 		frames++;
 

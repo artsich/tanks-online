@@ -3,18 +3,38 @@
 #include <stdlib.h>
 #include <algorithm>
 
-namespace core {
-
 #define DEBUG true
 
 #define ArrayCount(Array) (sizeof(Array) / sizeof(Array[0]))
 
 #if DEBUG
-#define Assert(Expression) if(!(Expression)) { *(int*)0 = 0; }
+#define Assert(Expression) if(Expression) { *(int*)0 = 0; }
 #else 
-	Assert(Expression)
+Assert(Expression)
 #endif
 
+typedef float       f32;
+
+typedef long long   i64;
+typedef int			i32;
+typedef short       i16;
+typedef char        i8;
+
+typedef long long   s64;
+typedef int			s32;
+typedef short       s16;
+typedef char        s8;
+
+typedef unsigned long long  u64;
+typedef unsigned int        u32;
+typedef unsigned short      u16;
+typedef unsigned char       u8;
+
+using TypeId = u32 ;
+using ObjectId = u32 ;
+
+namespace core 
+{
 	struct screen_buffer 
 	{
 		int Width;
@@ -23,19 +43,10 @@ namespace core {
 		int Pitch;
 		void* Memory;
 	};
-	
-	using TypeID = uint32_t;
-	using ObjectID = uint32_t;
 
-	using EntityId = TypeID;
-	using EntityTypeId = uint32_t;
-
-	using ComponentId = TypeID;
-	using ComponentTypeId = uint32_t;
-
-	using SystemTypeId = TypeID;
-
-	static const ObjectID	INVALID_OBJECT_ID = std::numeric_limits<ObjectID>::max();
-	static const TypeID		INVALID_TYPE_ID = std::numeric_limits<TypeID>::max();
-
+	struct game_memory
+	{
+		u64 SizeMemory;
+		void* Memory;
+	};
 }

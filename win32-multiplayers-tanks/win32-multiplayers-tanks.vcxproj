@@ -24,17 +24,36 @@
     <ClCompile Include="src\core\input\gamecontroller.cpp" />
     <ClCompile Include="src\core\input\KeyboardHanler.cpp" />
     <ClCompile Include="src\core\io\syncio.cpp" />
+    <ClCompile Include="src\core\math\v3.cpp" />
     <ClCompile Include="src\core\math\vec2.cpp" />
     <ClCompile Include="src\core\imageloaders\loadbmp.cpp" />
+    <ClCompile Include="src\core\memory\IAllocator.cpp" />
+    <ClCompile Include="src\core\memory\LinearAllocator.cpp" />
+    <ClCompile Include="src\core\memory\StackAllocator.cpp" />
     <ClCompile Include="src\core\utils\utils.cpp" />
     <ClCompile Include="src\core\window\Window.cpp" />
     <ClCompile Include="src\core\window\WindowManager.cpp" />
-    <ClCompile Include="src\game\systems\physics_system.cpp" />
+    <ClCompile Include="src\core\ecs\managers\ComponentContainer.cpp" />
+    <ClCompile Include="src\core\ecs\managers\ComponentManager.cpp" />
+    <ClCompile Include="src\game\components\MotionComponent.cpp" />
+    <ClCompile Include="src\game\components\RenderComponent.cpp" />
+    <ClCompile Include="src\game\components\TransformComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\graphics\Rasterizer.h" />
+    <ClInclude Include="src\core\math\math.h" />
+    <ClInclude Include="src\core\math\v3.h" />
+    <ClInclude Include="src\core\memory\IAllocator.h" />
+    <ClInclude Include="src\core\memory\LinearAllocator.h" />
+    <ClInclude Include="src\core\memory\StackAllocator.h" />
     <ClInclude Include="src\core\utils\utils.h" />
-    <ClInclude Include="src\game\Game.h" />
+    <ClInclude Include="src\core\ecs\ecs.h" />
+    <ClInclude Include="src\core\ecs\ECSEngine.h" />
+    <ClInclude Include="src\core\ecs\GameObject.h" />
+    <ClInclude Include="src\core\ecs\IComponent.h" />
+    <ClInclude Include="src\core\ecs\ISystem.h" />
+    <ClInclude Include="src\core\ecs\managers\ComponentContainer.h" />
+    <ClInclude Include="src\core\ecs\managers\ComponentManager.h" />
     <ClInclude Include="src\core\input\gamecontroller.h" />
     <ClInclude Include="src\core\input\IKeyListener.h" />
     <ClInclude Include="src\core\input\KeyboardHandler.h" />
@@ -46,7 +65,14 @@
     <ClInclude Include="src\core\core.h" />
     <ClInclude Include="src\core\window\Window.h" />
     <ClInclude Include="src\core\window\WindowManager.h" />
-    <ClInclude Include="src\game\systems\physics_system.h" />
+    <ClInclude Include="src\game\components\ComponentsMap.h" />
+    <ClInclude Include="src\game\components\MotionComponent.h" />
+    <ClInclude Include="src\game\components\RenderComponent.h" />
+    <ClInclude Include="src\game\components\TransformComponent.h" />
+    <ClInclude Include="src\game\systems\InputSystem.h" />
+    <ClInclude Include="src\game\systems\MotionSystem.h" />
+    <ClInclude Include="src\game\systems\RenderSystem.h" />
+    <ClInclude Include="src\game\systems\SystemMap.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -109,7 +135,7 @@
     <IntDir>$(Platform)\$(Configuration)\bin\intermediate</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -122,7 +148,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;FPS_DEBUG;INPUT_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -154,7 +181,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;FPS_DEBUG;INPUT_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

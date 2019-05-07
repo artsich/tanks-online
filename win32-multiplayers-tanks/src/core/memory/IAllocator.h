@@ -5,9 +5,9 @@
 #define MB(x) (KB(x) * 1024)
 #define GB(x) (MB(x) * 1024)
 
-#ifdef _WIN32
+#ifdef WIN32
 	#define DEFAULT_ALIGNMENT_OF_MEMORY 4
-#elif _WIN64
+#elif WIN64
 	#define DEFAULT_ALIGNMENT_OF_MEMORY 8
 #endif
 
@@ -29,7 +29,7 @@ namespace core { namespace memory {
 		u64 AllocatedMemory;
 		u64 MemoryAllocations;
 
-		IAllocator(const u64 MemorySize, void* Memory);
+		IAllocator(void* Memory, u64 MemorySize);
 		virtual ~IAllocator();
 
 		virtual void* Allocate(u64 size, u8 alignment) = 0;

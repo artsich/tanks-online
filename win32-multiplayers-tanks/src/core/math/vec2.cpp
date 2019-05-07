@@ -1,19 +1,18 @@
 #include "vec2.h"
 
-namespace core {
 namespace math {
 
 	vec2::vec2(float x, float y) {
 		this->x = x;
 		this->y = y;
 	}
-	
+
 	vec2::vec2(const vec2& other) {
 		this->x = other.x;
 		this->y = other.y;
 	}
 
-	vec2::~vec2() {};
+	vec2::~vec2() { };
 
 	vec2& vec2::add(const vec2& other) {
 		x += other.x;
@@ -87,56 +86,56 @@ namespace math {
 		return result;
 	}
 
-	vec2& vec2::add(const float& scalar){
+	vec2& vec2::add(const float& scalar) {
 		x += scalar;
 		y += scalar;
 		return *this;
 	}
-	vec2& vec2::sub(const float& scalar){
+	vec2& vec2::sub(const float& scalar) {
 		x -= scalar;
 		y -= scalar;
 		return *this;
 	}
-	vec2& vec2::mult(const float& scalar){
+	vec2& vec2::mult(const float& scalar) {
 		x *= scalar;
 		y *= scalar;
 		return *this;
 	}
-	vec2& vec2::div(const float& scalar){
+	vec2& vec2::div(const float& scalar) {
 		x /= scalar;
 		y /= scalar;
 		return *this;
 	}
 
-	vec2 operator+(vec2 left, const float& scalar){
+	vec2 operator+(vec2 left, const float& scalar) {
 		return left.add(scalar);
 	}
 
-	vec2 operator-(vec2 left, const float& scalar){
+	vec2 operator-(vec2 left, const float& scalar) {
 		return left.sub(scalar);
 	}
-	
-	vec2 operator/(vec2 left, const float& scalar){
+
+	vec2 operator/(vec2 left, const float& scalar) {
 		return left.div(scalar);
 	}
-	
-	vec2 operator*(vec2 left, const float& scalar){
+
+	vec2 operator*(vec2 left, const float& scalar) {
 		return left.mult(scalar);
 	}
 
-	vec2& vec2::operator+=(const float& scalar){
+	vec2& vec2::operator+=(const float& scalar) {
 		return add(scalar);
 	}
-	
-	vec2& vec2::operator-=(const float& scalar){
+
+	vec2& vec2::operator-=(const float& scalar) {
 		return sub(scalar);
 	}
-	
-	vec2& vec2::operator*=(const float& scalar){
+
+	vec2& vec2::operator*=(const float& scalar) {
 		return mult(scalar);
 	}
-	
-	vec2& vec2::operator/=(const float& scalar){
+
+	vec2& vec2::operator/=(const float& scalar) {
 		return div(scalar);
 	}
-}}
+}

@@ -1,11 +1,12 @@
 #pragma once
 #include <iostream>
+#include "../core.h"
 
-namespace core {
 namespace math {
-		
+
 	struct vec2 {
-		float x, y;
+
+		f32 x, y;
 
 		vec2() = default;
 		vec2(const vec2& other);
@@ -48,4 +49,6 @@ namespace math {
 
 		friend std::ostream& operator << (std::ostream& stream, const vec2& other);
 	};
-}}
+
+	typedef vec2 v2;
+}

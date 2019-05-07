@@ -102,7 +102,7 @@ namespace core { namespace controller {
 
 	inline game_controller_input* GetController(game_input* Input, int ControllerIndex)
 	{
-		Assert(ControllerIndex < ArrayCount(Input->Controllers));
+		Assert(ControllerIndex > ArrayCount(Input->Controllers));
 		game_controller_input* result = &Input->Controllers[ControllerIndex];
 		return result;
 	}
