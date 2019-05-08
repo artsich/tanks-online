@@ -52,12 +52,12 @@ namespace core { namespace graphics {
 		}
 	}
 
-	void Rasterizer::draw_rect(simple_sprite* sprite)
+	void Rasterizer::draw_rect(math::v2 pos, simple_sprite* sprite)
 	{
 		int32_t xmin, xmax, ymin, ymax;
-		xmin = sprite->pos.x;
+		xmin = pos.x;
 		xmax = xmin + sprite->size.x;
-		ymin = sprite->pos.y;
+		ymin = pos.y;
 		ymax = ymin + sprite->size.y;
 
 		if (xmin < 0)

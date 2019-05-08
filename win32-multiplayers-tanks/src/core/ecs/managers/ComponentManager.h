@@ -17,7 +17,7 @@
 #include "../../../core/memory/LinearAllocator.h"
 
 #define MAX_GAME_OBJECTS 100
-#define MAX_CONTAINERS_COMPONENTS 64
+#define MAX_CONTAINERS_COMPONENTS 300
 
 namespace core { namespace ecs {
 
@@ -44,6 +44,8 @@ namespace core { namespace ecs {
 
 		~ComponentManager();
 
+		void DeactivateCompoenents(GameObjectId);
+
 		template<class TComponent, class ...ARGS>
 		TComponent* AddComponent(GameObjectId OwnerId, ARGS&&... Args)
 		{
@@ -69,6 +71,11 @@ namespace core { namespace ecs {
 			Assert(GameObjectComponentsMatrix[id].size() <= ComponentTypeID);
 
 			ComponentId CID = GameObjectComponentsMatrix[id][ComponentTypeID];
+			if (CID == INVALID_COMPONENT_ID)
+			{
+				return nullptr;
+			}
+			
 			T* Result = (T*)ComponentTable[CID];
 			return Result;
 		}

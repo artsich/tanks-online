@@ -9,7 +9,6 @@ namespace core { namespace ecs {
 	struct GameObject
 	{
 		GameObjectId Id;
-		bool isAlive;
 	};
 
 } }

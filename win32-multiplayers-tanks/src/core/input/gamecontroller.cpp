@@ -1,5 +1,6 @@
 #include "gamecontroller.h"
 #include "KeyboardHandler.h"
+#include <string>
 
 namespace core { namespace controller { 
 
@@ -67,13 +68,14 @@ namespace core { namespace controller {
 		return(Result);
 	}
 
+
 	//TODO: Refactor isdown
 	static void Win32ProcessKeyboardMessage(game_button_state* NewState, DWORD IsDown)
 	{
 		if (NewState->EndedDown != IsDown)
 		{
 			NewState->EndedDown = IsDown;
-			++NewState->HalfTransiotionCount;
+	//		OutputDebugString(("\nKEY DEBUG: " + std::to_string(IsDown)).c_str());
 		}
 	}
 
@@ -82,14 +84,26 @@ namespace core { namespace controller {
 		Win32ProcessKeyboardMessage(&controller->MoveUp, 
 			core::input::InputHandler::isKeyPressed(VK_MOVE_UP));
 
-		Win32ProcessKeyboardMessage(&controller->MoveDown, core
-				::input::InputHandler::isKeyPressed(VK_MOVE_DOWN));
+		Win32ProcessKeyboardMessage(&controller->MoveDown, 
+			core::input::InputHandler::isKeyPressed(VK_MOVE_DOWN));
 
 		Win32ProcessKeyboardMessage(&controller->MoveRight, 
 			core::input::InputHandler::isKeyPressed(VK_MOVE_RIGHT));
 
 		Win32ProcessKeyboardMessage(&controller->MoveLeft, 
 			core::input::InputHandler::isKeyPressed(VK_MOVE_LEFT));
+
+		Win32ProcessKeyboardMessage(&controller->ActionLeft,
+			core::input::InputHandler::isKeyPressed(VK_LEFT_FIRE));
+
+		Win32ProcessKeyboardMessage(&controller->ActionRight,
+			core::input::InputHandler::isKeyPressed(VK_RIGHT_FIRE));
+
+		Win32ProcessKeyboardMessage(&controller->ActionUp,
+			core::input::InputHandler::isKeyPressed(VK_UP_FIRE));
+
+		Win32ProcessKeyboardMessage(&controller->ActionDown,
+			core::input::InputHandler::isKeyPressed(VK_DOWN_FIRE));
 	}
 
 	static void Win32ProcessXInputDigitalButton(DWORD xInputButtonState,
@@ -124,8 +138,6 @@ namespace core { namespace controller {
 		game_input* Temp = NewInput;
 		NewInput = OldInput;
 		OldInput = Temp;
-
-		//NewInput->dtForFrame = dt;
 
 		POINT mouse_pos;
 		GetCursorPos(&mouse_pos);

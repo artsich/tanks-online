@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <stdlib.h>
+#include <math.h>
 #include <algorithm>
 
 #define DEBUG true
@@ -49,4 +50,10 @@ namespace core
 		u64 SizeMemory;
 		void* Memory;
 	};
+
+	inline i32 Roundf32ToInt32(f32 Real32)
+	{
+		i32 Result = (i32)roundf(Real32);
+		return Result;
+	}
 }

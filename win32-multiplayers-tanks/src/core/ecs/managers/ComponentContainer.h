@@ -7,7 +7,7 @@
 #include "../../../core/memory/LinearAllocator.h"
 
 #define MAX_GAME_OBJECTS 100
-#define MAX_COMPONENTS 16
+#define MAX_COMPONENTS 64
 
 namespace core { namespace ecs {
 
@@ -26,7 +26,7 @@ namespace core { namespace ecs {
 			Allocator = new memory::LinearAllocator(StartMemory, MemorySize);
 
 			//TODO: Component check this resize !!
-			Components.resize(1);
+			Components.resize(0);
 		}
 
 		~ComponentsContainer()
@@ -38,7 +38,7 @@ namespace core { namespace ecs {
 		template<class... ARGS>
 		Type* CreateComponent(ARGS&&... Args)
 		{
-			void* AllocatedMemory = Allocator->Allocate(sizeof(Type), DEFAULT_ALIGNMENT_OF_MEMORY);
+			void* AllocatedMemory = Allocator->Allocate(sizeof(Type), __alignof(Type));
 
 			Assert(AllocatedMemory == nullptr);
 
@@ -65,6 +65,12 @@ namespace core { namespace ecs {
 		{
 			Assert(Components.size() <= Index);
 			return Components[Index];
+		}
+
+		void Clear()
+		{
+			Allocator.Clear();
+			Components.clear();
 		}
 
 		inline u32 GetSize() { return Components.size(); }

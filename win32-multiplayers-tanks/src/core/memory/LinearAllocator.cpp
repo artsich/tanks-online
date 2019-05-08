@@ -13,7 +13,7 @@ namespace core { namespace memory {
 	}
 
 	//TODO: AsU32Ptr - u32 , needmemory = u64
-	void* LinearAllocator::Allocate(u64 NeedMemory, uint8_t Alignment)
+	void* LinearAllocator::Allocate(u64 NeedMemory, u8 Alignment)
 	{
 		Assert(NeedMemory <= 0 && "allocate called with memSize = 0.");
 

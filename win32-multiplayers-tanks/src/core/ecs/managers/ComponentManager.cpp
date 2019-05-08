@@ -51,7 +51,15 @@ namespace core { namespace ecs {
 				GameObjectComponentsMatrix[i].resize(NUM_OF_COMPONENTS, INVALID_COMPONENT_ID);
 			}
 		}
+
 		GameObjectComponentsMatrix[OwnerId][ComponentType] = ComponentId;
 	}
 
+	void ComponentManager::DeactivateCompoenents(GameObjectId Id)
+	{
+		for (u32 i = 0; i < GameObjectComponentsMatrix[Id].size(); ++i)
+		{
+			GameObjectComponentsMatrix[Id][i] = INVALID_COMPONENT_ID;
+		}
+	}
 } }

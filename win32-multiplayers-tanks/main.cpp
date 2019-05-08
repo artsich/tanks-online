@@ -4,7 +4,6 @@
 
 #include "src/core/core.h"
 #include "src/core/ecs/ecs.h"
-#include "src/core/ecs/managers/ComponentManager.h"
 #include "src/core/math/math.h"
 #include "src/core/utils/Timer.h"
 #include "src/core/window/Window.h"
@@ -12,43 +11,15 @@
 #include "src/core/input/gamecontroller.h"
 #include "src/core/imageloaders/loadbmp.h"
 #include "src/core/input/KeyboardHandler.h"
+#include "src/core/ecs/managers/ComponentManager.h"
 
-#include "src/game/systems/SystemMap.h"
+#include "src/game/Entities.h"
 #include "src/game/components/ComponentsMap.h"
+#include "src/game/systems/SystemMap.h"
 
-#define TEST_IMAGE_FILE "C:\\Users\\artyo\\source\\repos\\multiplayer-tanks\\win32-multiplayers-tanks\\res\\game_tile_set.bmp"
-#define TEST_TEXT_FILE "C:\\Users\\artyo\\source\\repos\\multiplayer-tanks\\Debug\\text.txt"
+#include "src/game/GameSetting.h"
 
-#define GameWindowWidth 800
-#define GameWindowHeight 600
-
-const f32 MonitorRefreshHz = 60.0f;
-const f32 MsPerSecond = 1.0f / MonitorRefreshHz;
-
-core::graphics::texture* cut_texture(core::graphics::texture* source_texture, int x, int y, int w, int h) 
-{
-	uint32_t* source_buffer = (uint32_t*)source_texture->buffer;
-	core::graphics::texture* result = (core::graphics::texture*)malloc(sizeof(core::graphics::texture));
-	result->width = w;
-	result->height = h;
-
-	uint32_t* result_buffer = (uint32_t*)malloc(sizeof(uint32_t)*w*h);
-
-	for (int yy = y; yy < y + h; ++yy) 
-	{
-		uint32_t next_row = x + yy * source_texture->width;
-		uint32_t* row = (source_buffer + next_row);
-		for (int xx = x; xx < x + w; ++xx)
-		{
-			*result_buffer++ = *row++;
-		}
-	}
-	
-	result->buffer = result_buffer;
-	return result;
-}
-
-INT WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow)
+INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow)
 {
 #pragma region setting
 	core::window::setting_window setting;
@@ -80,30 +51,67 @@ INT WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow)
 	core::ecs::ComponentManager CManager(&LAllocator);
 //core::ecs::EntiytManager EManager(GameMemory + LAllocator.SizeMemory, SizeMemory - LAllocator.SizeMemory);
 
-	core::ecs::ECSEngine ecsEngine(&CManager);
-	game::logic::RenderSystem RenderSystem(&ecsEngine, &rasterizer);
-	ecsEngine.addSystem(&RenderSystem);
-
 #pragma endregion
 
-#pragma region BlockCreate
+#pragma region WorldCreating
 
-	core::ecs::GameObject Block {1, true};
-	core::ecs::GameObject Block2 { 2, true };
+	u32 WorldMap[TILES_COUNT_X * TILES_COUNT_Y] =
+	{
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1,
+		1, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 3, 0, 0, 1,
+		1, 0, 3, 0, 0, 0, 3, 0, 0, 3, 3, 3, 0, 3, 3, 3, 1,
+		1, 0, 3, 0, 0, 3, 3, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 3, 3, 0, 0, 3, 3, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 3, 3, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 3, 3, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 1,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	};
 
-	math::v2 RenderPosition = { 100, 100 };
-	math::v2 RenderSize = { 100, 100 };
-	u32 Color = 255 << 24;
-	auto Sprite = CManager.AddComponent<RenderComponent>(Block.Id, RenderPosition, RenderSize, Color);
+	game::world World;
+	World.Tiles = WorldMap;
+	World.TileChunkCountX = TILES_COUNT_X;
+	World.TileChunkCountY = TILES_COUNT_Y;	
+	World.TileSideInPixels = TILE_SIDE_IN_PIXELS;
+	World.TileSideInMeters = TILE_SIDE_IN_METERS;
+	World.MetersToPixels = (f32)(World.TileSideInPixels / World.TileSideInMeters);
 
-	math::v2 RenderPosition2 = { 1.0, 1.0 };
-	math::v2 RenderSize2 = { 100, 100 };
-	u32 Color2 = 255 << 8;
-	auto Sprite2 = CManager.AddComponent<RenderComponent>(Block2.Id, RenderPosition2, RenderSize2, Color2);
+	LoadMap(&CManager, &World);
 
-	//math::v3 velocity = { 10.0f, 10.f };
-	//f32 Acceleration = 16.0f;
-	//auto justTest = CManager.AddComponent<MotionComponent>(Block.Id, velocity, Acceleration);
+//_------Player
+
+	math::v2 ScreenPlayerP = { 100, 100 };
+	math::v2 Size = math::v2(60.0, 60.0);
+	f32 PlayerAcceleration = 128;
+	game::CreatePlayer(&CManager, ScreenPlayerP, Size, PlayerAcceleration);
+
+	math::v2 ScreenEnemyrP = { 660, 300 };
+	math::v2 EnemySize = math::v2(60.0, 60.0);
+	f32 EnemyAcceleration = 0.0;
+	game::CreateEnemy(&CManager, ScreenEnemyrP, EnemySize, EnemyAcceleration);
+
+//End Player
+	
+	using namespace game;
+	using namespace logic;
+
+	ECSEngine ecsEngine(&CManager);
+	RenderSystem RenderSystem(&ecsEngine, &rasterizer);
+	MotionSystem MotionSystem(&ecsEngine, &World);
+	InputSystem  InputSystem(&ecsEngine);
+	HealthSystem HealthSystem(&ecsEngine);
+	BulletSystem BulletSystem(&ecsEngine);
+	ShooterSystem ShooterSystem(&ecsEngine);
+
+	ecsEngine.addSystem(&ShooterSystem);
+	ecsEngine.addSystem(&InputSystem);
+	ecsEngine.addSystem(&MotionSystem);
+	ecsEngine.addSystem(&BulletSystem);
+	ecsEngine.addSystem(&HealthSystem);
+	ecsEngine.addSystem(&RenderSystem);
 
 #pragma endregion
 
@@ -137,19 +145,15 @@ INT WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow)
 		if (delta > MsPerSecond)
 		{
 			window.processMessage();
-			core::controller::update_input();
-			
-
+			ecsEngine.update(delta);
+			window.render();
+			window.clear();
 			delta = 0;
 			updates++;
 		}
 
-		window.clear();
 
-		ecsEngine.update(delta);
-		window.render();
 		frames++;
-
 		if (timer.elapsed() - time > 1.0f)
 		{
 #if FPS_DEBUG

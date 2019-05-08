@@ -5,10 +5,12 @@
 
 struct TransformComponent : public core::ecs::Component<TransformComponent>
 {
-    math::v3 Pos;
-    math::v3 Rot;
-    math::v3 Scale;
+    math::v2 ScreenP;
 
 	TransformComponent() = default;
-	TransformComponent(math::v3 Pos, math::v3 Rot, math::v3 Scale);
+
+	TransformComponent(math::v2 P)
+	{
+		ScreenP = P;
+	}
 };

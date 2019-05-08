@@ -15,7 +15,10 @@ namespace core { namespace controller {
 #define VK_MOVE_DOWN	'S'
 #define VK_MOVE_LEFT	'A'
 #define VK_MOVE_RIGHT	'D'
-#define VK_FIRE			'F'
+#define VK_LEFT_FIRE	'J'
+#define VK_RIGHT_FIRE	'L'
+#define VK_UP_FIRE		'I'
+#define VK_DOWN_FIRE	'K'
 
 	struct game_button_state
 	{

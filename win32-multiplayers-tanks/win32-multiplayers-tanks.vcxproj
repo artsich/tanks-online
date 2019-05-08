@@ -33,13 +33,10 @@
     <ClCompile Include="src\core\utils\utils.cpp" />
     <ClCompile Include="src\core\window\Window.cpp" />
     <ClCompile Include="src\core\window\WindowManager.cpp" />
-    <ClCompile Include="src\core\ecs\managers\ComponentContainer.cpp" />
     <ClCompile Include="src\core\ecs\managers\ComponentManager.cpp" />
-    <ClCompile Include="src\game\components\MotionComponent.cpp" />
-    <ClCompile Include="src\game\components\RenderComponent.cpp" />
-    <ClCompile Include="src\game\components\TransformComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\graphics\GeometryPrimitives.h" />
     <ClInclude Include="src\core\graphics\Rasterizer.h" />
     <ClInclude Include="src\core\math\math.h" />
     <ClInclude Include="src\core\math\v3.h" />
@@ -65,13 +62,24 @@
     <ClInclude Include="src\core\core.h" />
     <ClInclude Include="src\core\window\Window.h" />
     <ClInclude Include="src\core\window\WindowManager.h" />
+    <ClInclude Include="src\game\components\BulletComponent.h" />
     <ClInclude Include="src\game\components\ComponentsMap.h" />
+    <ClInclude Include="src\game\components\EnemyComponent.h" />
+    <ClInclude Include="src\game\components\HealthComponent.h" />
     <ClInclude Include="src\game\components\MotionComponent.h" />
+    <ClInclude Include="src\game\components\PlayerComponent.h" />
     <ClInclude Include="src\game\components\RenderComponent.h" />
+    <ClInclude Include="src\game\components\RigidbodyComponent.h" />
+    <ClInclude Include="src\game\components\ShooterComponent.h" />
     <ClInclude Include="src\game\components\TransformComponent.h" />
+    <ClInclude Include="src\game\Entities.h" />
+    <ClInclude Include="src\game\GameSetting.h" />
+    <ClInclude Include="src\game\systems\BulletSystem.h" />
+    <ClInclude Include="src\game\systems\HealthSystem.h" />
     <ClInclude Include="src\game\systems\InputSystem.h" />
     <ClInclude Include="src\game\systems\MotionSystem.h" />
     <ClInclude Include="src\game\systems\RenderSystem.h" />
+    <ClInclude Include="src\game\systems\ShooterComponent.h" />
     <ClInclude Include="src\game\systems\SystemMap.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
