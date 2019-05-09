@@ -30,7 +30,6 @@
     <ClCompile Include="src\core\memory\IAllocator.cpp" />
     <ClCompile Include="src\core\memory\LinearAllocator.cpp" />
     <ClCompile Include="src\core\memory\StackAllocator.cpp" />
-    <ClCompile Include="src\core\utils\utils.cpp" />
     <ClCompile Include="src\core\window\Window.cpp" />
     <ClCompile Include="src\core\window\WindowManager.cpp" />
     <ClCompile Include="src\core\ecs\managers\ComponentManager.cpp" />
@@ -64,11 +63,12 @@
     <ClInclude Include="src\core\window\WindowManager.h" />
     <ClInclude Include="src\game\components\BulletComponent.h" />
     <ClInclude Include="src\game\components\ComponentsMap.h" />
+    <ClInclude Include="src\game\components\ControllerIndexComponent.h" />
     <ClInclude Include="src\game\components\EnemyComponent.h" />
     <ClInclude Include="src\game\components\HealthComponent.h" />
     <ClInclude Include="src\game\components\MotionComponent.h" />
-    <ClInclude Include="src\game\components\PlayerComponent.h" />
     <ClInclude Include="src\game\components\RenderComponent.h" />
+    <ClInclude Include="src\game\components\RespawnComponent.h" />
     <ClInclude Include="src\game\components\RigidbodyComponent.h" />
     <ClInclude Include="src\game\components\ShooterComponent.h" />
     <ClInclude Include="src\game\components\TransformComponent.h" />
@@ -79,6 +79,7 @@
     <ClInclude Include="src\game\systems\InputSystem.h" />
     <ClInclude Include="src\game\systems\MotionSystem.h" />
     <ClInclude Include="src\game\systems\RenderSystem.h" />
+    <ClInclude Include="src\game\systems\RespawnSystem.h" />
     <ClInclude Include="src\game\systems\ShooterComponent.h" />
     <ClInclude Include="src\game\systems\SystemMap.h" />
   </ItemGroup>

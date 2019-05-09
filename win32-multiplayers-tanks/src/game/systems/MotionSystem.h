@@ -14,10 +14,10 @@ namespace game { namespace logic {
 	{
 	private:
 		ecs::ECSEngine* engine;
-		game::world* WorldMap;
+		world* WorldMap;
 
 	public:
-		MotionSystem(ecs::ECSEngine* engine, game::world* WorldMap) :
+		MotionSystem(ecs::ECSEngine* engine, world* WorldMap) :
 			engine(engine),
 			WorldMap(WorldMap)
 		{        
@@ -41,6 +41,7 @@ namespace game { namespace logic {
 				NewP += mc->velocity * mc->acceleration * dt;
 				v2 OriginP = NewP + rb->Size / 2;
 
+				//TODO: Fix 
 				if (IsWorldPointEmpty(WorldMap, OriginP))
 				{ 
 					transformСomponents->ScreenP = NewP;
@@ -51,7 +52,6 @@ namespace game { namespace logic {
 					{
 						mc->acceleration = 0.0f;
 					}
-//					mc->velocity = { 0.0, 0.0 };
 					//TODO: Need a register who is collise
 				}
 			}

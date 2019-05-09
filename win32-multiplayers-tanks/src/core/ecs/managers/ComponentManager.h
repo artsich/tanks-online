@@ -49,6 +49,8 @@ namespace core { namespace ecs {
 		template<class TComponent, class ...ARGS>
 		TComponent* AddComponent(GameObjectId OwnerId, ARGS&&... Args)
 		{
+			if (TryCheckHasComponent<TComponent>(OwnerId)) return nullptr;
+
 			//TODO(important): Check on exist component for OwnerID !!!
 			ComponentsContainer<TComponent>* Container = GetComponentsContainer<TComponent>();
 			TComponent* Result = Container->CreateComponent(std::forward<ARGS>(Args)...);
@@ -65,6 +67,8 @@ namespace core { namespace ecs {
 		template<class T>
 		T* GetComponent(GameObjectId id)
 		{
+			if (id == INVALID_GAME_OBJECT_ID) return nullptr;
+
 			TypeId ComponentTypeID = T::STATIC_COMPONENT_TYPE_ID;
 
 			Assert(GameObjectComponentsMatrix.size() <= id);
@@ -80,9 +84,20 @@ namespace core { namespace ecs {
 			return Result;
 		}
 
-		void DisableGameObject(GameObjectId id)
+		template<class T>
+		bool TryCheckHasComponent(GameObjectId id)
 		{
+			if (id == INVALID_GAME_OBJECT_ID) return false;
 
+			if (GameObjectComponentsMatrix.size() > id)
+			{
+				TypeId CID = T::STATIC_COMPONENT_TYPE_ID;
+				if (GameObjectComponentsMatrix[id].size() > CID)
+				{
+					return GameObjectComponentsMatrix[id][CID] != INVALID_COMPONENT_ID;
+				}
+			}
+			return false;
 		}
 
 		template<class T>

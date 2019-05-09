@@ -4,10 +4,12 @@
 struct HealthComponent : public core::ecs::Component<HealthComponent>
 {
 	u32 Health;
+	u32 DefaultHP;
 
 	HealthComponent() = default;	
-	HealthComponent(u32 Health) : 
-		Health(Health)
+	HealthComponent(u32 Health, u32 DefaultHP) :
+		Health(Health),
+		DefaultHP(DefaultHP)
 	{
 	}
 };

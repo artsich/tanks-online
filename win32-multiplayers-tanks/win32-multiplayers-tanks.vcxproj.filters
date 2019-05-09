@@ -42,9 +42,6 @@
     <ClCompile Include="src\core\graphics\Rasterizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\utils\utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\memory\IAllocator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -182,9 +179,6 @@
     <ClInclude Include="src\game\GameSetting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\game\components\PlayerComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\game\components\BulletComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -201,6 +195,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\game\systems\ShooterComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\components\RespawnComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\systems\RespawnSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\components\ControllerIndexComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

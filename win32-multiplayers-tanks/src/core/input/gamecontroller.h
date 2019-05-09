@@ -5,11 +5,11 @@
 
 #include "../core.h"
 
+namespace core { namespace controller {
+
 #define XINPUT1_4 "xinput1_4.dll"
 #define XINPUT1_3 "xinput1_3.dll"
 #define XINPUT9_1_0 "xinput9_1_0.dll"
-
-namespace core { namespace controller {
 
 #define VK_MOVE_UP		'W'
 #define VK_MOVE_DOWN	'S'
@@ -19,6 +19,9 @@ namespace core { namespace controller {
 #define VK_RIGHT_FIRE	'L'
 #define VK_UP_FIRE		'I'
 #define VK_DOWN_FIRE	'K'
+
+#define START_GAMEPAD_INDEX 1
+#define KEYBOARD_INDEX 0
 
 	struct game_button_state
 	{
@@ -47,19 +50,12 @@ namespace core { namespace controller {
 				game_button_state ActionDown;
 				game_button_state ActionLeft;
 				game_button_state ActionRight;
-
-				game_button_state LeftShoulder;
-				game_button_state RightShoulder;
-
-				game_button_state Start;
-				game_button_state Back;
 			};
 		};
 	};
 
 	struct game_input
 	{
-//		float dtForFrame;
 		int32_t MouseX, MouseY;
 
 		game_button_state Mousebuttons[5];

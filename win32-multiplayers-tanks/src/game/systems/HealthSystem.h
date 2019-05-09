@@ -3,20 +3,24 @@
 #include "../../core/ecs/ecs.h"
 #include "../components/ComponentsMap.h"
 
-class HealthSystem : public core::ecs::ISystem
-{
-private:
-	core::ecs::ECSEngine* Engine;
+namespace game { namespace logic {
 
-public:
-	HealthSystem(core::ecs::ECSEngine* Engine) :
-		Engine(Engine)
+	class HealthSystem : public core::ecs::ISystem
 	{
-	}
+	private:
+		core::ecs::ECSEngine* Engine;
 
-	void Update(f32 dt)
-	{
-		auto DiedEntities = Engine->GetComponentManager()->GetComponentsContainer<HealthComponent>();
-	}
+	public:
+		HealthSystem(core::ecs::ECSEngine* Engine) :
+			Engine(Engine)
+		{
+		}
 
-};
+		void Update(f32 dt)
+		{
+//			auto DiedEntities = Engine->GetComponentManager()->GetComponentsContainer<HealthComponent>();
+			//TODO: Make change color when HP < 30%
+		}
+
+	};
+}}

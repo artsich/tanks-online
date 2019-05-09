@@ -47,7 +47,7 @@ namespace core { namespace window {
 
 		WindowClass = { 0 };
 		WindowClass.hInstance = setting->hInstance;
-		WindowClass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+		WindowClass.style = setting->style;
 		WindowClass.lpszClassName = setting->windowClassName;
 		WindowClass.lpfnWndProc = Win32WindowCallback;
 		Running = false;

@@ -20,7 +20,8 @@ namespace core { namespace window {
 		int height;
 		int windowWidth;
 		int windowHeight;
-
+		UINT style;
+		
 		HINSTANCE hInstance;
 	};
 

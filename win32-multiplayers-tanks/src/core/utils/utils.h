@@ -27,5 +27,5 @@ namespace core { namespace util {
 	template<class T>
 	TypeId FamilyTypeID<T>::count = 0;
 
-	unsigned int reverse(unsigned int x);
+
 }}

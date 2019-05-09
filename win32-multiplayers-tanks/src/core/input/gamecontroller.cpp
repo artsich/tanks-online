@@ -241,14 +241,6 @@ namespace core { namespace controller {
 				Win32ProcessXInputDigitalButton(gamePad->wButtons,
 					&oldController->ActionUp, XINPUT_GAMEPAD_Y,
 					&newController->ActionUp);
-
-				Win32ProcessXInputDigitalButton(gamePad->wButtons,
-					&oldController->Start, XINPUT_GAMEPAD_START,
-					&newController->Start);
-
-				Win32ProcessXInputDigitalButton(gamePad->wButtons,
-					&oldController->Back, XINPUT_GAMEPAD_BACK,
-					&newController->Back);
 			}
 			else
 			{

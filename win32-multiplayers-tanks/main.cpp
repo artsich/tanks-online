@@ -9,7 +9,6 @@
 #include "src/core/window/Window.h"
 #include "src/core/graphics/Rasterizer.h"
 #include "src/core/input/gamecontroller.h"
-#include "src/core/imageloaders/loadbmp.h"
 #include "src/core/input/KeyboardHandler.h"
 #include "src/core/ecs/managers/ComponentManager.h"
 
@@ -19,6 +18,9 @@
 
 #include "src/game/GameSetting.h"
 
+using namespace game;
+using namespace logic;
+
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow)
 {
 #pragma region setting
@@ -27,6 +29,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow
 	setting.height = GameWindowHeight;
 	setting.windowWidth = 1024;
 	setting.windowHeight = 720;
+	setting.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 	setting.windowClassName = "MainWindow";
 	setting.title = "World of tanks online";
 	setting.hInstance = hInstance;
@@ -44,8 +47,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow
 
 //MEMMORY ALLOCATE
 	core::game_memory GameMemory;
-	GameMemory.SizeMemory = MB(100);
-	GameMemory.Memory = malloc(GameMemory.SizeMemory / 2);
+	GameMemory.SizeMemory = MB(64);
+	GameMemory.Memory = malloc(GameMemory.SizeMemory);
 
 	memory::LinearAllocator LAllocator(GameMemory.Memory, GameMemory.SizeMemory);
 	core::ecs::ComponentManager CManager(&LAllocator);
@@ -81,22 +84,20 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow
 
 	LoadMap(&CManager, &World);
 
-//_------Player
-
-	math::v2 ScreenPlayerP = { 100, 100 };
+//_------First Player
+	math::v2 ScreenPlayerPOne = { 100, 100 };
 	math::v2 Size = math::v2(60.0, 60.0);
-	f32 PlayerAcceleration = 128;
-	game::CreatePlayer(&CManager, ScreenPlayerP, Size, PlayerAcceleration);
+	math::v2 PlayerRespawnP = math::v2(100.0f, 100.0f);
+	u32 ControllerIndexP1 = 0;
+	game::CreatePlayer(&CManager, ScreenPlayerPOne, Size, PlayerRespawnP, 
+		Sprites::PlayerSprite, ControllerIndexP1);
 
-	math::v2 ScreenEnemyrP = { 660, 300 };
+//_------Second Player
+	math::v2 ScreenEnemyrPTwo = { 660, 300 };
 	math::v2 EnemySize = math::v2(60.0, 60.0);
-	f32 EnemyAcceleration = 0.0;
-	game::CreateEnemy(&CManager, ScreenEnemyrP, EnemySize, EnemyAcceleration);
-
-//End Player
-	
-	using namespace game;
-	using namespace logic;
+	math::v2 RespawnEnemyP = math::v2(680, 300);
+	u32 ControllerIndexP2 = 1;
+	game::CreatePlayer(&CManager, ScreenEnemyrPTwo, EnemySize, RespawnEnemyP, Sprites::PlayerSprite2, ControllerIndexP2);
 
 	ECSEngine ecsEngine(&CManager);
 	RenderSystem RenderSystem(&ecsEngine, &rasterizer);
@@ -105,6 +106,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow
 	HealthSystem HealthSystem(&ecsEngine);
 	BulletSystem BulletSystem(&ecsEngine);
 	ShooterSystem ShooterSystem(&ecsEngine);
+	RespawnSystem RespSystem(&ecsEngine);
 
 	ecsEngine.addSystem(&ShooterSystem);
 	ecsEngine.addSystem(&InputSystem);
@@ -112,22 +114,9 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow
 	ecsEngine.addSystem(&BulletSystem);
 	ecsEngine.addSystem(&HealthSystem);
 	ecsEngine.addSystem(&RenderSystem);
+	ecsEngine.addSystem(&RespSystem);
 
 #pragma endregion
-
-#if TEXTURE_TEST
-	core::BmpImage image(TEST_IMAGE_FILE);
-	auto header = image.getBitmapHeader();
-
-	core::graphics::texture mainTileSet;
-	mainTileSet.buffer = image.getPixels();
-	mainTileSet.width = header->Width;
-	mainTileSet.height = header->Height;
-
-	core::graphics::sprite tank;
-	tank.pos = core::math::vec2(GameWindowWidth / 4, GameWindowHeight / 4);
-	tank.texture = *cut_texture(&mainTileSet, 0, 0, 100, 100);
-#endif
 
 	core::Timer timer;
 	float time = 0.0;
@@ -145,19 +134,19 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow
 		if (delta > MsPerSecond)
 		{
 			window.processMessage();
-			ecsEngine.update(delta);
-			window.render();
-			window.clear();
 			delta = 0;
 			updates++;
 		}
 
-
+		ecsEngine.update(delta);
+		window.render();
+		window.clear();
 		frames++;
 		if (timer.elapsed() - time > 1.0f)
 		{
 #if FPS_DEBUG
-			OutputDebugString((std::to_string(frames) + " fps : " + std::to_string(updates) + " updates\n").c_str());
+			OutputDebugString((std::to_string(frames) + " fps : " + \
+				std::to_string(updates) + " updates\n").c_str());
 #endif
 			time += 1.0f;
 			updates = frames = 0;

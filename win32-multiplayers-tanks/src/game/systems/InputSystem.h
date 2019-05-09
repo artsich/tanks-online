@@ -10,105 +10,96 @@
 using namespace core;
 using namespace controller;
 
-class InputSystem : public ecs::ISystem
-{
-private:
-    const game_input* input;
-    ecs::ECSEngine* engine;
-	f32 ShootLags;
+namespace game { namespace logic {
 
-public:
-    InputSystem(ecs::ECSEngine* engine) :
-        engine(engine)
-    {
-        input = get_input();
-    }
-
-    void Update(f32 dt) override
-    {
-		update_input();
-		bool WasInput = false;
-		for (u32 ControllerIndex = 0;
-			ControllerIndex < ArrayCount(input->Controllers);
-			++ControllerIndex)
-		{
-			const game_controller_input* Controller = &input->Controllers[ControllerIndex];
-
-			if (Controller->IsAnalog)
-			{
-				f32 dx = Controller->StickAverageX;
-				f32 dy = -Controller->StickAverageY;
-				OnUpdateMotionComponents(math::v2(dx, dy));
-				WasInput = true;
-				break;
-			}
-			else
-			{
-				i32 dx = 0.0, dy = 0.0;
-				if (Controller->MoveDown.EndedDown)
-				{
-					dy = 1;
-				}				
-				if (Controller->MoveUp.EndedDown)
-				{
-					dy = -1;
-				}				
-				if (Controller->MoveRight.EndedDown)
-				{
-					dx = 1;
-				}
-				
-				if (Controller->MoveLeft.EndedDown)
-				{
-					dx = -1;
-				}
-
-				if (dx || dy)
-				{
-					OnUpdateMotionComponents(math::v2(dx, dy));
-					WasInput = true;
-					break;
-				}
-			}
-			
-			if (Controller->ActionRight.EndedDown)
-			{
-				OnPlayerShoot(v2(0.0, 1.0), dt);
-			}
-
-			if (Controller->ActionLeft.EndedDown)
-			{
-				OnPlayerShoot(v2(0.0, -1.0), dt);
-			}
-			
-			if (Controller->ActionUp.EndedDown)
-			{
-				OnPlayerShoot(v2(1.0, 0.0), dt);
-			}
-
-			if (Controller->ActionDown.EndedDown)
-			{
-				OnPlayerShoot(v2(0.0, 1.0), dt);
-			}
-		}
-		
-		if (!WasInput)
-		{
-			OnUpdateMotionComponents(math::v2(0.0f, 0.0f));
-		}
-    }
-
-private:
-
-	void OnPlayerShoot(v2 Dir, f32 dt)
+	class InputSystem : public ecs::ISystem
 	{
-		auto PC = engine->GetComponentManager()->GetComponentsContainer<PlayerComponent>();
+	private:
+		const game_input* input;
+		ecs::ECSEngine* engine;
+		f32 ShootLags;
 
-		for (u32 i = 0; i < PC->GetSize(); ++i)
+	public:
+		InputSystem(ecs::ECSEngine* engine) :
+			engine(engine)
 		{
-			if (PC->Components[i]->CurrentPlayer)
+			input = get_input();
+		}
+
+		void Update(f32 dt) override
+		{
+			update_input();
+
+			//TODO: i < ControllerIndexContainer.GetSize();
+			for (u32 ControllerIndex = 0;
+				ControllerIndex < 2;//ArrayCount(input->Controllers);
+				++ControllerIndex)
 			{
-				GameObjectId ShooterId = PC->Components[i]->ownerId;
+				const game_controller_input* Controller = &input->Controllers[ControllerIndex];
+
+				v2 V = {};
+				if (Controller->IsAnalog)
+				{
+					V.x = Controller->StickAverageX;
+					V.y = -Controller->StickAverageY;
+				}
+				else
+				{
+					if (Controller->MoveDown.EndedDown)
+					{
+						V.y = 1;
+					}
+					if (Controller->MoveUp.EndedDown)
+					{
+						V.y = -1;
+					}
+					if (Controller->MoveRight.EndedDown)
+					{
+						V.x = 1;
+					}
+					if (Controller->MoveLeft.EndedDown)
+					{
+						V.x = -1;
+					}
+				}
+
+				OnUpdateMotionComponents(ControllerIndex, V);
+
+				if (Controller->ActionRight.EndedDown)
+				{
+					OnPlayerShoot(ControllerIndex, v2(1.0, 0.0), dt);
+				}
+
+				if (Controller->ActionLeft.EndedDown)
+				{
+					OnPlayerShoot(ControllerIndex, v2(-1.0, 0.0), dt);
+				}
+
+				if (Controller->ActionUp.EndedDown)
+				{
+					OnPlayerShoot(ControllerIndex, v2(0.0, -1.0), dt);
+				}
+
+				if (Controller->ActionDown.EndedDown)
+				{
+					OnPlayerShoot(ControllerIndex, v2(0.0, 1.0), dt);
+				}
+			}
+		}
+
+	private:
+
+		void OnPlayerShoot(u32 ControllerIndex, v2 Dir, f32 dt)
+		{
+			core::ecs::ComponentsContainer<ControllerIndexComponent>* CICContainer =
+				engine->GetComponentManager()->GetComponentsContainer<ControllerIndexComponent>();
+
+			if (CICContainer->GetSize() <= ControllerIndex) return;
+
+			ControllerIndexComponent* CIC = CICContainer->Components[ControllerIndex];
+			if (CIC->isActive)
+			{
+				GameObjectId ShooterId = CIC->ownerId;
 				ShooterComponent* ShootComp = engine->GetComponentManager()->GetComponent<ShooterComponent>(ShooterId);
 
 				if (ShootComp->ReloadTime > ShootComp->ShootSpeed)
@@ -116,26 +107,26 @@ private:
 					ShootComp->ReloadTime = 0.0;
 					v2 O = engine->GetComponentManager()->GetComponent<TransformComponent>(ShooterId)->ScreenP;
 					v2 S = engine->GetComponentManager()->GetComponent<RigidbodyComponent2D>(ShooterId)->Size;
-					//TODO: Fix this equstion
 					O = O + (S / 2.0) * (Dir + 1);
-					game::CreateBullet(engine->GetComponentManager(), ShooterId, O, Dir);
-					break;
+					CreateBullet(engine->GetComponentManager(), ShooterId, O, Dir);
 				}
-			}			
+			}
 		}
-	}
 
-    void OnUpdateMotionComponents(math::v2 NewVel)
-    {
-        core::ecs::ComponentsContainer<MotionComponent>* mcs = 
-			engine->GetComponentManager()->GetComponentsContainer<MotionComponent>();
+		void OnUpdateMotionComponents(u32 ControllerIndex, math::v2 NewVel)
+		{
+			core::ecs::ComponentsContainer<ControllerIndexComponent>* CICContainer =
+				engine->GetComponentManager()->GetComponentsContainer<ControllerIndexComponent>();
 
-		for(u32 i = 0; i < mcs->GetSize(); ++i)
-        {
-            if(mcs->Components[i]->isActive && !mcs->Components[i]->Auto)
-            {
-				mcs->Components[i]->velocity = NewVel;
-            }
-        }
-    }
-};
+			if (CICContainer->GetSize() <= ControllerIndex) return;
+
+			ControllerIndexComponent* CIC = CICContainer->Components[ControllerIndex];
+			if (CIC->isActive)
+			{
+				auto mcs = engine->GetComponentManager()->GetComponent<MotionComponent>(CIC->ownerId);
+				mcs->velocity = NewVel;
+			}
+		}
+
+	};
+}}
