@@ -73,25 +73,21 @@ public:
 			
 			if (Controller->ActionRight.EndedDown)
 			{
-				OutputDebugString("Fire Right\n");
 				OnPlayerShoot(v2(0.0, 1.0), dt);
 			}
 
 			if (Controller->ActionLeft.EndedDown)
 			{
-				OutputDebugString("Fire Left\n");
 				OnPlayerShoot(v2(0.0, -1.0), dt);
 			}
 			
 			if (Controller->ActionUp.EndedDown)
 			{
-				OutputDebugString("Fire Up\n");
 				OnPlayerShoot(v2(1.0, 0.0), dt);
 			}
 
 			if (Controller->ActionDown.EndedDown)
 			{
-				OutputDebugString("Fire Down\n");
 				OnPlayerShoot(v2(0.0, 1.0), dt);
 			}
 		}
@@ -103,7 +99,7 @@ public:
     }
 
 private:
-	//TODO: don't work because need hold 0.5sec for first shoot :))) I'am DEBIL
+
 	void OnPlayerShoot(v2 Dir, f32 dt)
 	{
 		auto PC = engine->GetComponentManager()->GetComponentsContainer<PlayerComponent>();

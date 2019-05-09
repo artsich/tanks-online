@@ -59,7 +59,11 @@ namespace core { namespace ecs {
 	{
 		for (u32 i = 0; i < GameObjectComponentsMatrix[Id].size(); ++i)
 		{
-			GameObjectComponentsMatrix[Id][i] = INVALID_COMPONENT_ID;
+			ComponentId DeletingId = GameObjectComponentsMatrix[Id][i];
+			if (DeletingId != INVALID_COMPONENT_ID)
+			{
+				ComponentTable[DeletingId]->isActive = false;
+			}
 		}
 	}
 } }

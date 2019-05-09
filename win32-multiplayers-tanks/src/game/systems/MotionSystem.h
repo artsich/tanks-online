@@ -31,6 +31,8 @@ namespace game { namespace logic {
 			for (u32 i = 0; i < motionСomponents->GetSize(); ++i)
 			{
 				MotionComponent* mc = motionСomponents->Components[i];
+				if (!mc->isActive) continue;
+
 				u32 ownerID = mc->getOwnerId();
 				TransformComponent* transformСomponents = engine->GetComponentManager()->GetComponent<TransformComponent>(ownerID);
 				RigidbodyComponent2D* rb = engine->GetComponentManager()->GetComponent<RigidbodyComponent2D>(ownerID);
@@ -40,11 +42,15 @@ namespace game { namespace logic {
 				v2 OriginP = NewP + rb->Size / 2;
 
 				if (IsWorldPointEmpty(WorldMap, OriginP))
-				{
+				{ 
 					transformСomponents->ScreenP = NewP;
 				}
 				else
 				{
+					if (mc->Auto)
+					{
+						mc->acceleration = 0.0f;
+					}
 //					mc->velocity = { 0.0, 0.0 };
 					//TODO: Need a register who is collise
 				}

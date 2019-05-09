@@ -23,6 +23,8 @@ public:
 
 		for (u32 i = 0; i < Bullets->GetSize(); ++i)
 		{
+			if (!Bullets->Components[i]->isActive) continue;
+
 			auto BulletRB = Engine->GetComponentManager()->GetComponent<RigidbodyComponent2D>(Bullets->Components[i]->ownerId);
 			auto BulletTranform = Engine->GetComponentManager()->GetComponent<TransformComponent>(Bullets->Components[i]->ownerId);
 			auto BulletInfo = Engine->GetComponentManager()->GetComponent<BulletComponent>(Bullets->Components[i]->ownerId);
@@ -46,6 +48,12 @@ public:
 					if (TargetHealth->Health > 0)
 					{
 						TargetHealth->Health -= BulletInfo->Damage;
+						Engine->GetComponentManager()->DeactivateCompoenents(Bullets->Components[i]->ownerId);
+
+						if (TargetHealth->Health <= 0)
+						{
+							Engine->GetComponentManager()->DeactivateCompoenents(TargetId);
+						}
 					}
 				}
 			}

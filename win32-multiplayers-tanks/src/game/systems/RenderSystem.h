@@ -27,10 +27,13 @@ namespace game { namespace logic {
 			auto RenderCompmonents = World->GetComponentManager()->GetComponentsContainer<RenderComponent>();
 			for (u32 i = 0; i < RenderCompmonents->GetSize(); ++i)
 			{
-				RenderComponent* RendrComponent = RenderCompmonents->Components[i];
-				TransformComponent* Pos = World->GetComponentManager()->GetComponent<TransformComponent>(RendrComponent->ownerId);
-				if(!Pos) continue;
-				Graphics->draw_rect(Pos->ScreenP, RendrComponent->Sprite);
+				if (RenderCompmonents->Components[i]->isActive)
+				{
+					RenderComponent* RendrComponent = RenderCompmonents->Components[i];
+					TransformComponent* Pos = World->GetComponentManager()->GetComponent<TransformComponent>(RendrComponent->ownerId);
+					if (!Pos) continue;
+					Graphics->draw_rect(Pos->ScreenP, RendrComponent->Sprite);
+				}
 			}
 		}
 	};

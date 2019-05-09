@@ -80,6 +80,11 @@ namespace core { namespace ecs {
 			return Result;
 		}
 
+		void DisableGameObject(GameObjectId id)
+		{
+
+		}
+
 		template<class T>
 		ComponentsContainer<T>* GetComponentsContainer()
 		{
