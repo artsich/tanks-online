@@ -134,19 +134,21 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR pCmdLine, int nCmdShow
 		if (delta > MsPerSecond)
 		{
 			window.processMessage();
+			ecsEngine.update(delta);
+			window.render();
+			window.clear();
 			delta = 0;
 			updates++;
 		}
 
-		ecsEngine.update(delta);
-		window.render();
-		window.clear();
 		frames++;
+
 		if (timer.elapsed() - time > 1.0f)
 		{
 #if FPS_DEBUG
-			OutputDebugString((std::to_string(frames) + " fps : " + \
-				std::to_string(updates) + " updates\n").c_str());
+			//OutputDebugString((std::to_string(frames) + " fps : " + \
+			//	std::to_string(updates) + " updates\n").c_str());
+			OutputDebugString(("fps :" + std::to_string(updates) + "\n").c_str());
 #endif
 			time += 1.0f;
 			updates = frames = 0;

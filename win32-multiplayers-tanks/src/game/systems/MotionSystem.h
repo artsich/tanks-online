@@ -39,10 +39,17 @@ namespace game { namespace logic {
 
 				v2 NewP = transformСomponents->ScreenP;
 				NewP += mc->velocity * mc->acceleration * dt;
+
 				v2 OriginP = NewP + rb->Size / 2;
 
-				//TODO: Fix 
-				if (IsWorldPointEmpty(WorldMap, OriginP))
+				//v2 RightP = OriginP;
+				//RightP += rb->Size / 2.0 - 1.0f;
+				//v2 LeftP = OriginP;
+				//LeftP -= rb->Size / 2.0 - 1.0f;
+				//TODO: fix collisiton detected!!!
+				if (IsWorldPointEmpty(WorldMap, OriginP)/* &&
+					IsWorldPointEmpty(WorldMap, LeftP) &&
+					IsWorldPointEmpty(WorldMap, RightP)*/)
 				{ 
 					transformСomponents->ScreenP = NewP;
 				}

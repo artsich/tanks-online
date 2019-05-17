@@ -4,7 +4,7 @@
 #include "../components/ComponentsMap.h"
 
 namespace game { namespace logic {
-
+	//TODO: ???
 	class HealthSystem : public core::ecs::ISystem
 	{
 	private:

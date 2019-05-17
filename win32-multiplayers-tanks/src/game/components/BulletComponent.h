@@ -5,6 +5,7 @@
 struct BulletComponent : public core::ecs::Component<BulletComponent>
 {
 	u32 Damage;
+	//TODO: LOL i'am debil, you have ownerID, OMGo
 	GameObjectId ShooterId;
 
 	BulletComponent() = default;

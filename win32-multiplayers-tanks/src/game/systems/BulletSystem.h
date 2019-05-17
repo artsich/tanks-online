@@ -12,7 +12,7 @@ namespace game { namespace logic {
 	{
 	private:
 		core::ecs::ECSEngine* Engine;
-
+		
 	public:
 		BulletSystem(core::ecs::ECSEngine* Engine) :
 			Engine(Engine)
