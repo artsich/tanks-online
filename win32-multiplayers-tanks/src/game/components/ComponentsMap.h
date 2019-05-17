@@ -1,6 +1,5 @@
 #pragma once 
 
-#include "EnemyComponent.h"
 #include "MotionComponent.h"
 #include "RenderComponent.h"
 #include "HealthComponent.h"
