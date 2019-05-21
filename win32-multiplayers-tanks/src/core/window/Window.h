@@ -35,6 +35,7 @@ namespace core { namespace window {
 		BOOLEAN Running;
 		const setting_window* setting;
 		core::input::IKeyListener* keyListener;
+		WINDOWPLACEMENT windowPosition;
 
 	public:
 		Window(const setting_window* setting);
@@ -44,6 +45,8 @@ namespace core { namespace window {
 		void processMessage();
 		void clear();
 		void close();
+
+		void toogleFullScreen();
 
 		bool isClose() const { return Running; }
 
