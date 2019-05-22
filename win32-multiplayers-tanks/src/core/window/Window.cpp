@@ -115,6 +115,35 @@ namespace core { namespace window {
 		screenBuffer.Memory = VirtualAlloc(0, BitmapMemorySize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 	}
 
+	void Window::toogleFullScreen()
+	{
+		//NOTE: Following Raymon Chen prescription for fullscreen toggleing, see:
+		// http://blogs.msdn.com/b/oldnewthing/archive/2010/04/12/9994016.aspx
+		DWORD Style = GetWindowLong(HandleWindow, GWL_STYLE);
+		if (Style & WS_OVERLAPPEDWINDOW)
+		{
+			MONITORINFO MonitorInfo = { sizeof(MonitorInfo) };
+			if (GetWindowPlacement(HandleWindow, &windowPosition) &&
+				GetMonitorInfo(MonitorFromWindow(HandleWindow, MONITOR_DEFAULTTOPRIMARY), &MonitorInfo))
+			{
+				SetWindowLong(HandleWindow, GWL_STYLE, Style & ~WS_OVERLAPPEDWINDOW);
+				SetWindowPos(HandleWindow, HWND_TOP,
+					MonitorInfo.rcMonitor.left, MonitorInfo.rcMonitor.top,
+					MonitorInfo.rcMonitor.right - MonitorInfo.rcMonitor.left,
+					MonitorInfo.rcMonitor.bottom - MonitorInfo.rcMonitor.top,
+					SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+			}
+		}
+		else
+		{
+			SetWindowLong(HandleWindow, GWL_STYLE, Style | WS_OVERLAPPEDWINDOW);
+			SetWindowPlacement(HandleWindow, &windowPosition);
+			SetWindowPos(HandleWindow, 0, 0, 0, 0, 0,
+				SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER |
+				SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+		}
+	}
+
 	void Window::processMessage() {
 		MSG Message;
 		while (PeekMessage(&Message, 0, 0, 0, PM_REMOVE)) 
@@ -132,12 +161,6 @@ namespace core { namespace window {
 				
 					if (WasDown) 
 					{
-#if !INPUT_DEBUG
-						char buf[20] = "WasDown ";
-						buf[8] = (char)VKCode;
-						buf[9] = '\n';
-						OutputDebugString(buf);
-#endif
 						if (keyListener)
 						{
 							keyListener->releaseKey(VKCode);
@@ -145,12 +168,6 @@ namespace core { namespace window {
 					}
 					if (IsDown) 
 					{
-#if !INPUT_DEBUG
-						char buf[20] = "IsDown ";
-						buf[7] = (char)VKCode;
-						buf[8] = '\n';
-						OutputDebugString(buf);
-#endif
 						if (keyListener)
 						{
 							keyListener->pressedKey(VKCode);
@@ -162,6 +179,12 @@ namespace core { namespace window {
 					{
 						Running = false;
 					}
+					
+					if (VKCode == VK_F1 && WasDown)
+					{
+						toogleFullScreen();
+					}
+
 				} break;
 
 				default: 
