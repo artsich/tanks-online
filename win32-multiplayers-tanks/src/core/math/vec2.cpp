@@ -1,4 +1,5 @@
 #include "vec2.h"
+#include "geometryutils.h"
 
 namespace math {
 
@@ -137,5 +138,27 @@ namespace math {
 
 	vec2& vec2::operator/=(const float& scalar) {
 		return div(scalar);
+	}
+
+	void vec2::Normalize()
+	{
+		f32 L = Length();
+		x /= L;
+		y /= L;
+	}
+
+	f32 vec2::Length()
+	{
+		return std::sqrt(x*x + y*y);
+	}
+
+	void vec2::Rotate(f32 radian)
+	{
+		f32 NewX, NewY;
+		NewX =  x * cosf(radian) - y * sinf(radian);
+		NewY = -x * sinf(radian) - y * cosf(radian);
+
+		x = NewX;
+		y = NewY;
 	}
 }

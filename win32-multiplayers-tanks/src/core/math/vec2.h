@@ -28,7 +28,6 @@ namespace math {
 		vec2& operator*=(const vec2& right);
 		vec2& operator/=(const vec2& right);
 
-
 		vec2& add(const float& scalar);
 		vec2& sub(const float& scalar);
 		vec2& mult(const float& scalar);
@@ -46,6 +45,10 @@ namespace math {
 
 		bool operator != (const vec2& other);
 		bool operator == (const vec2& other);
+
+		void Normalize();
+		f32 Length();
+		void Rotate(f32 degree);
 
 		friend std::ostream& operator << (std::ostream& stream, const vec2& other);
 	};
