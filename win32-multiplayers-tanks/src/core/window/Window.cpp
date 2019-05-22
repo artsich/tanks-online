@@ -161,12 +161,6 @@ namespace core { namespace window {
 				
 					if (WasDown) 
 					{
-#if !INPUT_DEBUG
-						char buf[20] = "WasDown ";
-						buf[8] = (char)VKCode;
-						buf[9] = '\n';
-						OutputDebugString(buf);
-#endif
 						if (keyListener)
 						{
 							keyListener->releaseKey(VKCode);
@@ -174,12 +168,6 @@ namespace core { namespace window {
 					}
 					if (IsDown) 
 					{
-#if !INPUT_DEBUG
-						char buf[20] = "IsDown ";
-						buf[7] = (char)VKCode;
-						buf[8] = '\n';
-						OutputDebugString(buf);
-#endif
 						if (keyListener)
 						{
 							keyListener->pressedKey(VKCode);
@@ -191,6 +179,12 @@ namespace core { namespace window {
 					{
 						Running = false;
 					}
+					
+					if (VKCode == VK_F1 && WasDown)
+					{
+						toogleFullScreen();
+					}
+
 				} break;
 
 				default: 
