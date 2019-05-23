@@ -2,8 +2,11 @@
 
 #include "../core/core.h"
 
-#define GameWindowWidth 1020
-#define GameWindowHeight 720
+#define GameWindowWidth 1366
+#define GameWindowHeight 768
+
+#define GAME_WINDOW_WIDTH GameWindowWidth 
+#define GAME_WINDOW_HEIGHT GameWindowHeight
 
 const f32 MonitorRefreshHz = 60.0f;
 const f32 MsPerSecond = 1.0f / MonitorRefreshHz;

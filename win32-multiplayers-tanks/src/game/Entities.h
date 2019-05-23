@@ -45,7 +45,7 @@ namespace game
 
 	enum Sprites
 	{
-		PlayerSprite = 1,
+		PlayerSprite = 0,
 		PlayerSprite2,
 		BulletSprite,
 		BlockSprite1,
@@ -80,30 +80,24 @@ namespace game
 		static core::graphics::simple_sprite* GetSprite(Sprites type)
 		{
 			static core::graphics::simple_sprite Player = { v2(TILE_SIDE_IN_PIXELS, TILE_SIDE_IN_PIXELS), PLAYER_COLOR };
-			static core::graphics::simple_sprite Player2 =  { v2(TILE_SIDE_IN_PIXELS, TILE_SIDE_IN_PIXELS), PLAYER_COLOR2 };
+			static core::graphics::simple_sprite Player2 = { v2(TILE_SIDE_IN_PIXELS, TILE_SIDE_IN_PIXELS), PLAYER_COLOR2 };
 			static core::graphics::simple_sprite Bullet = { v2(BULLET_SIDE_IN_PIXELS, BULLET_SIDE_IN_PIXELS), BULLET_COLOR };
 
 			static core::graphics::simple_sprite Block1 = { v2(TILE_SIDE_IN_PIXELS, TILE_SIDE_IN_PIXELS), BLOCK1_COLOR };
 			static core::graphics::simple_sprite Block2 = { v2(TILE_SIDE_IN_PIXELS, TILE_SIDE_IN_PIXELS), BLOCK2_COLOR };
 			static core::graphics::simple_sprite Block3 = { v2(TILE_SIDE_IN_PIXELS, TILE_SIDE_IN_PIXELS), BLOCK3_COLOR };
 
-			switch (type)
+			static simple_sprite* Sprites[6] = 
 			{
-			case 1:
-				return &Player;
-			case 2:
-				return &Player2;
-			case 3:
-				return &Bullet;
-			case 4:
-				return &Block1;
-			case 5:
-				return &Block2;
-			case 6:
-				return &Block3;
-			default:
-				return nullptr;
-			}
+				&Player, 
+				&Player2, 
+				&Bullet, 
+				&Block1, 
+				&Block2, 
+				&Block3
+			};
+
+			return Sprites[type];
 		}
 	};
 

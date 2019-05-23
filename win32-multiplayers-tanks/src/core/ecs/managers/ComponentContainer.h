@@ -60,13 +60,6 @@ namespace core { namespace ecs {
 			}*/
 		}
 
-		//Bagfix: why don't work??
-		Type* operator[] (u32 Index)
-		{
-			Assert(Components.size() <= Index);
-			return Components[Index];
-		}
-
 		void Clear()
 		{
 			Allocator.Clear();
